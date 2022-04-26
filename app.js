@@ -9,6 +9,7 @@ const mongoose = require('mongoose')
 require('dotenv').config()
 
 var indexRouter = require('./routes/index');
+var postRouter = require('./routes/post');
 
 mongoose.connect(process.env.MONGODB_CONNECT)
   .then(() => console.log('Mongodb connect success'))
@@ -28,15 +29,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors())
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/posts', postRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
