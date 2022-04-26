@@ -4,11 +4,15 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors')
+const mongoose = require('mongoose')
 
 require('dotenv').config()
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+
+mongoose.connect(process.env.MONGODB_CONNECT)
+  .then(() => console.log('Mongodb connect success'))
+  .catch(e => console.error(e))
 
 var app = express();
 
