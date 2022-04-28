@@ -1,8 +1,11 @@
+/**
+ * Ref：
+ * https://fufong79570.medium.com/%E4%B8%B2%E6%8E%A5google-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%99%BB%E5%85%A5-%E5%AF%A6%E4%BD%9C-node-js-b750821cde90
+ * https://github.com/passport/todos-express-google-oauth2
+ */
 const passport = require('passport')
-const GoogleStrategy = require('passport-google-oauth20').Strategy
-const users = {}
+const GoogleStrategy = require('passport-google-oauth20')
 
-// 新增google Strategy
 passport.use(
   new GoogleStrategy(
     {
@@ -10,29 +13,23 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: 'http://localhost:3000/auth/google/callback'
     },
-    (accessToken, refreshToken, profile, done) => {
-      // profile._json內存放妳向google要的使用者資料
-      if (profile._json) {
-        const id = profile._json.sub
-        users[id] = profile._json
-
-        //使用者資料存在req內，回傳到後面
-        return done(null, users[id])
-      }
-      //失敗回傳false
-      return done(null, false)
+    (accessToken, refreshToken, profile, cb) => {
+      console.log('profile', profile)
+      return cb(null, profile);
     }
   )
 )
 
-// 這邊簡單來說就是簡化存在session內的資料，session存放使用者id
-// 再用使用者id找出詳細資料
-passport.serializeUser((user, done) => {
-  return done(null, user.sub)
-})
-passport.deserializeUser((userId, done) => {
-  const user = users[userId]
-  return done(null, user)
-})
+// 可設定要將哪些 user 資訊，儲存在 Session 中的 passport.user
+passport.serializeUser(function (user, cb) {
+  console.log('serializeUser', user)
+  cb(null, user);
+});
+
+// 可藉由從 Session 中獲得的資訊去撈該 user 的資料
+passport.deserializeUser(function (obj, cb) {
+  console.log('deserializeUser', obj)
+  cb(null, obj);
+});
 
 module.exports = passport

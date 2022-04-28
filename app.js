@@ -31,10 +31,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors())
 
-// Google 登入設定
 app.use(
   session({
-    secret: 'googleAuth'
+    secret: 'verySecret'
   })
 )
 app.use(passport.initialize())

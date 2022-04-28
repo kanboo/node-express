@@ -16,7 +16,7 @@ router.get('/login-google-success', function (req, res, next) {
   console.log('Google User', req.user)
   res.render('login-success', {
     type: 'Google',
-    userName: req.user.name
+    userName: req.user.displayName
   });
 });
 
