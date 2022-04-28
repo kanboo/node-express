@@ -1,14 +1,17 @@
 var createError = require('http-errors');
 var express = require('express');
+var session = require('express-session')
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors')
 const mongoose = require('mongoose')
+const passport = require('passport')
 
 require('dotenv').config()
 
 var indexRouter = require('./routes/index');
+var authRouter = require('./routes/auth');
 var postRouter = require('./routes/post');
 
 mongoose.connect(process.env.MONGODB_CONNECT)
@@ -28,7 +31,17 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors())
 
+// Google 登入設定
+app.use(
+  session({
+    secret: 'googleAuth'
+  })
+)
+app.use(passport.initialize())
+app.use(passport.session())
+
 app.use('/', indexRouter);
+app.use('/auth', authRouter);
 app.use('/posts', postRouter);
 
 // catch 404 and forward to error handler
