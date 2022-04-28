@@ -27,4 +27,20 @@ router.get('/login-google-fail', function (req, res, next) {
   });
 });
 
+// 後端之 Facebook 登入成功頁面
+router.get('/login-facebook-success', function (req, res, next) {
+  console.log('Facebook User', req.user)
+  res.render('login-success', {
+    type: 'Facebook',
+    userName: req.user.displayName
+  });
+});
+
+// 後端之 Facebook 登入失敗頁面
+router.get('/login-facebook-fail', function (req, res, next) {
+  res.render('login-fail', {
+    type: 'Facebook',
+  });
+});
+
 module.exports = router;
