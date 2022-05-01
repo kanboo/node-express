@@ -1,10 +1,18 @@
 const Post = require('../models/post')
+const User = require('../models/user')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
-
 
 exports.getPosts = async (req, res, next) => {
   try {
-    const posts = await Post.find()
+    const timeSort = req.query.timeSort == "asc" ? "createdAt" : "-createdAt"
+    const q = req.query.keyword !== undefined ? { "content": new RegExp(req.query.keyword) } : {};
+    const posts = await Post
+      .find(q)
+      .populate({
+        path: 'user',
+        select: 'name photo'
+      }).sort(timeSort);
+
     successResponse(res, 200, posts)
   } catch (e) {
     console.error(e)
@@ -14,14 +22,14 @@ exports.getPosts = async (req, res, next) => {
 
 exports.createPost = async (req, res, next) => {
   try {
-    const { userName, userPhoto, content } = req.body;
+    const { user, content, image } = req.body;
 
-    if (!userName || !content) {
-      errorResponse(res, 400, "使用者名稱及內文需必填！");
+    if (!user || !content) {
+      errorResponse(res, 400, "使用者及內文需必填！");
       return
     }
 
-    await Post.create({ userName, userPhoto, content });
+    await Post.create({ user, content, image });
 
     const posts = await Post.find();
     successResponse(res, 200, posts);
