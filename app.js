@@ -11,6 +11,7 @@ require('dotenv').config()
 
 var indexRouter = require('./routes/index');
 var postRouter = require('./routes/post');
+var imageRouter = require('./routes/image');
 
 mongoose.connect(process.env.MONGODB_CONNECT)
   .then(() => console.log('Mongodb connect success'))
@@ -31,7 +32,8 @@ app.use(cors())
 app.use(fileupload());
 
 app.use('/', indexRouter);
-app.use('/posts', postRouter);
+app.use('/api/posts', postRouter);
+app.use('/api/images', imageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
