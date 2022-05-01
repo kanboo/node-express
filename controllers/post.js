@@ -22,11 +22,17 @@ exports.getPosts = async (req, res, next) => {
 
 exports.createPost = async (req, res, next) => {
   try {
-    const { user, content, image } = req.body;
+    const { user, content } = req.body;
+    let image = ''
 
     if (!user || !content) {
       errorResponse(res, 400, "使用者及內文需必填！");
       return
+    }
+
+    // TODO：待優化串接 Imgur
+    if (req.files) {
+      image = `data:${req.files.image.mimetype};base64,${Buffer.from(req.files.image.data).toString('base64')}` 
     }
 
     await Post.create({ user, content, image });
