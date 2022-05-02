@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors')
 const mongoose = require('mongoose')
+const fileupload = require("express-fileupload");
 const passport = require('passport')
 
 require('dotenv').config()
@@ -13,6 +14,7 @@ require('dotenv').config()
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
 var postRouter = require('./routes/post');
+var imageRouter = require('./routes/image');
 
 mongoose.connect(process.env.MONGODB_CONNECT)
   .then(() => console.log('Mongodb connect success'))
@@ -30,18 +32,24 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors())
+app.use(fileupload());
 
-app.use(
-  session({
-    secret: 'verySecret'
-  })
-)
+app.use(session({
+  secret: 'verySecret',
+  resave: true,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 1000 * 60 * 30,
+  },
+}))
+
 app.use(passport.initialize())
 app.use(passport.session())
 
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
-app.use('/posts', postRouter);
+app.use('/api/posts', postRouter);
+app.use('/api/images', imageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
