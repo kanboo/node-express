@@ -3,6 +3,18 @@ const router = express.Router();
 const User = require('../models/user')
 const bcrypt = require('bcrypt');
 
+// Mail
+const nodemailer = require('nodemailer');
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  auth: {
+    user: process.env.MAILER_ACCOUNT,
+    pass: process.env.MAILER_PASSWORD,
+  },
+});
+
+// Middleware
 const isAuth = require('../middleware/is-auth')
 
 /* GET home page. */
@@ -21,7 +33,20 @@ router.post('/sign-up', async (req, res, next) => {
     const hashPassword = await bcrypt.hash(password, 12)
 
     await User.create({ name, email, password: hashPassword })
-    res.redirect('/sign-up')
+
+    // 發信通知
+    transporter.sendMail({
+      from: process.env.MAILER_ACCOUNT,
+      to: email,
+      subject: 'Kanboo website register success',
+      html: 'Congratulations on your successful registration.',
+    })
+      .then(info => {
+        console.log({ info });
+      })
+      .catch(console.error);
+
+    res.redirect('/login')
   } catch (e) {
     console.error(e)
     res.redirect('/sign-up')
