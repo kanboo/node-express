@@ -22,13 +22,13 @@ passport.use(
 
 // 可設定要將哪些 user 資訊，儲存在 Session 中的 passport.user
 passport.serializeUser(function (user, cb) {
-  console.log('serializeUser', user)
+  // console.log('serializeUser', user)
   cb(null, user);
 });
 
 // 可藉由從 Session 中獲得的資訊去撈該 user 的資料
 passport.deserializeUser(function (obj, cb) {
-  console.log('deserializeUser', obj)
+  // console.log('deserializeUser', obj)
   cb(null, obj);
 });
 

@@ -32,20 +32,15 @@ passport.use(
   )
 );
 
-// Configure Passport authenticated session persistence.
-//
-// In order to restore authentication state across HTTP requests, Passport needs
-// to serialize users into and deserialize users out of the session.  In a
-// production-quality application, this would typically be as simple as
-// supplying the user ID when serializing, and querying the user record by ID
-// from the database when deserializing.  However, due to the fact that this
-// example does not have a database, the complete Facebook profile is serialized
-// and deserialized.
+// 可設定要將哪些 user 資訊，儲存在 Session 中的 passport.user
 passport.serializeUser(function (user, cb) {
+  // console.log('serializeUser', user)
   cb(null, user);
 });
 
+// 可藉由從 Session 中獲得的資訊去撈該 user 的資料
 passport.deserializeUser(function (obj, cb) {
+  // console.log('deserializeUser', obj)
   cb(null, obj);
 });
 

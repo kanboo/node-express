@@ -15,7 +15,7 @@ exports.getGoogleAuthByFrontend = async (req, res, next) => {
   })
 
   //拿到的ticket就是換回來的使用者資料
-  console.log(ticket)
+  console.log('getGoogleAuthByFrontend', ticket)
 
   //以下就個人需求看要拿資料做哪些使用
   //ex 使用者資訊存入資料庫，把資料存到 session內 等等
