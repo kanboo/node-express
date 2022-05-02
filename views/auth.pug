@@ -44,3 +44,22 @@ html(lang='en')
     //- 籍由後端轉導 Facebook 登入
     a(href='http://localhost:3000/auth/facebook')
       button Facebook login by backend
+
+    hr
+    form(action='/login' method='post')
+      .container
+        h1 Login
+        p Please fill in this form to login.
+        hr
+        label(for='email')
+          b Email
+        input#email(type='text' placeholder='Enter Email' name='email' required='')
+        br
+        br
+        label(for='password')
+          b Password
+        input#password(type='password' placeholder='Enter Password' name='password' required='')
+        br
+        br
+        hr
+        button.loginbtn(type='submit') Login
