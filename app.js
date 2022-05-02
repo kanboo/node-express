@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors')
 const mongoose = require('mongoose')
+const MongoStore = require('connect-mongo');
 const fileupload = require("express-fileupload");
 const passport = require('passport')
 
@@ -36,11 +37,12 @@ app.use(fileupload());
 
 app.use(session({
   secret: 'verySecret',
-  resave: true,
+  resave: false,
   saveUninitialized: true,
   cookie: {
     maxAge: 1000 * 60 * 30,
   },
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_CONNECT })
 }))
 
 app.use(passport.initialize())
