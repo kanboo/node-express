@@ -5,7 +5,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors')
 const mongoose = require('mongoose')
-const fileupload = require("express-fileupload");
 
 require('dotenv').config()
 
@@ -29,7 +28,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors())
-app.use(fileupload());
 
 app.use('/', indexRouter);
 app.use('/api/posts', postRouter);
