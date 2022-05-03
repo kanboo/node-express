@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+const { errorResponse } = require('../utils/responseHandle')
+
 
 const multer = require('multer')
 const upload = multer({
@@ -26,7 +28,7 @@ router.post(
   ImageController.createImage,
   (error, req, res, next) => {
     // 上傳失敗，丟出錯誤訊息時執行
-    res.status(400).send({ error: error.message })
+    errorResponse(res, 400, error.message)
   }
 );
 
