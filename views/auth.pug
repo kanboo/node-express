@@ -16,7 +16,7 @@ html(lang='en')
     .g-signin2(data-onsuccess='onSignIn')
     script.
       function onSignIn(googleUser) {
-        const url = "http://localhost:3000/auth/google"
+        const url = "https://infinite-wildwood-24756.herokuapp.com/auth/google"
         //-  會跳出去要求授權畫面，回來後才達得到token
         let id_token = googleUser.getAuthResponse().id_token
         //- 拿到後傳到後端去驗證，路由可自行設定
@@ -37,12 +37,12 @@ html(lang='en')
       
     hr
     //- 籍由後端轉導 Google 登入
-    a(href='http://localhost:3000/auth/google/backend')
+    a(href='/auth/google/backend')
       button Google login by backend
 
     hr
     //- 籍由後端轉導 Facebook 登入
-    a(href='http://localhost:3000/auth/facebook')
+    a(href='/auth/facebook')
       button Facebook login by backend
 
     hr

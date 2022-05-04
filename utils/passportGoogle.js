@@ -11,10 +11,10 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: 'http://localhost:3000/auth/google/callback'
+      callbackURL: process.env.GOOGLE_LOGIN_CALL_BACK_URL,
     },
     (accessToken, refreshToken, profile, cb) => {
-      console.log('profile', profile)
+      console.log('Google Profile', profile)
       return cb(null, profile);
     }
   )

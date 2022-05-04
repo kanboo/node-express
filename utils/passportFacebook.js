@@ -19,7 +19,7 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-      callbackURL: 'http://localhost:3000/auth/facebook/callback',
+      callbackURL: process.env.FACEBOOK_LOGIN_CALL_BACK_URL,
     },
     function (accessToken, refreshToken, profile, cb) {
       // In this example, the user's Facebook profile is supplied as the user
@@ -27,6 +27,7 @@ passport.use(
       // be associated with a user record in the application's database, which
       // allows for account linking and authentication with other identity
       // providers.
+      console.log('FB Profile', profile)
       return cb(null, profile);
     }
   )
