@@ -1,0 +1,65 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    title Document
+    //- 引入套件 axios 等等post到後端路由去驗證 以及 google官方的套件
+    script(src='https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js')
+    script(src='https://apis.google.com/js/platform.js' async='' defer='')
+  body
+    div GOOGLE 登入底家
+    //- content 放上妳申請的client_Id
+    meta(name='google-signin-client_id' content='173099838907-li9bditf29krbrrpn4ld96otge6u2oqg.apps.googleusercontent.com')
+    //- 放上第三方登入的button，按下去會觸發 onSignIn 的function
+    .g-signin2(data-onsuccess='onSignIn')
+    script.
+      function onSignIn(googleUser) {
+        const url = "http://localhost:3000/auth/google"
+        //-  會跳出去要求授權畫面，回來後才達得到token
+        let id_token = googleUser.getAuthResponse().id_token
+        //- 拿到後傳到後端去驗證，路由可自行設定
+        axios.post(url, {id_token})
+          .then(res => console.log('send to backend successfully'))
+          .catch(err => console.error('error: send id_token fail!'))
+      }
+    //- 這裡是設置登出鍵
+    a(href='#' onclick='signOut();') Sign out
+    //- 放上第三方登出的button，按下去會觸發 signOut 的function
+    script.
+      function signOut() {
+        let auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+          console.log('User signed out.');
+        });
+      }
+      
+    hr
+    //- 籍由後端轉導 Google 登入
+    a(href='http://localhost:3000/auth/google/backend')
+      button Google login by backend
+
+    hr
+    //- 籍由後端轉導 Facebook 登入
+    a(href='http://localhost:3000/auth/facebook')
+      button Facebook login by backend
+
+    hr
+    form(action='/login' method='post')
+      .container
+        h1 Login
+        p Please fill in this form to login.
+        hr
+        label(for='email')
+          b Email
+        input#email(type='text' placeholder='Enter Email' name='email' required='')
+        br
+        br
+        label(for='password')
+          b Password
+        input#password(type='password' placeholder='Enter Password' name='password' required='')
+        br
+        br
+        hr
+        button.loginbtn(type='submit') Login

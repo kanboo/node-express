@@ -1,22 +1,26 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var cors = require('cors')
+const createError = require('http-errors');
+const express = require('express');
+const session = require('express-session')
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors')
 const mongoose = require('mongoose')
+const MongoStore = require('connect-mongo');
+const passport = require('passport')
 
 require('dotenv').config()
 
-var indexRouter = require('./routes/index');
-var postRouter = require('./routes/post');
-var imageRouter = require('./routes/image');
+const indexRouter = require('./routes/index');
+const authRouter = require('./routes/auth');
+const postRouter = require('./routes/post');
+const imageRouter = require('./routes/image');
 
 mongoose.connect(process.env.MONGODB_CONNECT)
   .then(() => console.log('Mongodb connect success'))
   .catch(e => console.error(e))
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -29,7 +33,21 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors())
 
+app.use(session({
+  secret: 'verySecret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 1000 * 60 * 30,
+  },
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_CONNECT })
+}))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
 app.use('/', indexRouter);
+app.use('/auth', authRouter);
 app.use('/api/posts', postRouter);
 app.use('/api/images', imageRouter);
 

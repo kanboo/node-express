@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       select: false
     },
+    password: {
+      type: String,
+      required: [true, '請輸入您的 Password'],
+      select: false
+    },
     photo: {
       type: String,
     },

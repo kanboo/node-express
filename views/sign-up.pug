@@ -1,0 +1,34 @@
+extends layout
+
+block content
+  form(action='/sign-up' method='post')
+    .container
+      h1 Register
+      p Please fill in this form to create an account.
+      hr
+      label(for='name')
+        b Name
+      input#name(type='text' placeholder='Enter Name' name='name' required='')
+      br
+      br
+      label(for='email')
+        b Email
+      input#email(type='text' placeholder='Enter Email' name='email' required='')
+      br
+      br
+      label(for='password')
+        b Password
+      input#password(type='password' placeholder='Enter Password' name='password' required='')
+      br
+      br
+      label(for='confirm-password')
+        b Repeat Password
+      input#confirm-password(type='password' placeholder='Repeat Password' name='confirmPassword' required='')
+      hr
+      button.registerbtn(type='submit') Register
+    .container.signin
+      p
+        | Already have an account? 
+        a(href='/login') Sign in
+        | .
+
