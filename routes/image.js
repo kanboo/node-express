@@ -1,15 +1,14 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express')
+const router = express.Router()
 const { errorResponse } = require('../utils/responseHandle')
-
 
 const multer = require('multer')
 const upload = multer({
   limits: {
     // 限制上傳檔案的大小為 1MB
-    fileSize: 1 * 1024 * 1024
+    fileSize: 1 * 1024 * 1024,
   },
-  fileFilter(req, file, cb) {
+  fileFilter (req, file, cb) {
     // 只接受三種圖片格式
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
       cb(new Error('Please upload an image'))
@@ -17,7 +16,7 @@ const upload = multer({
 
     // Success
     cb(null, true)
-  }
+  },
 })
 
 const ImageController = require('../controllers/image')
@@ -29,7 +28,7 @@ router.post(
   (error, req, res, next) => {
     // 上傳失敗，丟出錯誤訊息時執行
     errorResponse(res, 400, error.message)
-  }
-);
+  },
+)
 
-module.exports = router;
+module.exports = router

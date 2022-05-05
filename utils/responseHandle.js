@@ -1,18 +1,18 @@
 const successResponse = (res, statusCode, data) => {
   res.status(statusCode).json({
     status: 'success',
-    data
+    data,
   })
 }
 
 const errorResponse = (res, statusCode, message) => {
   res.status(statusCode).json({
     status: 'false',
-    message
+    message,
   })
 }
 
-const catchResponse = (e, statusCode = 404, message = "") => {
+const catchResponse = (e, statusCode = 404, message = '') => {
   const error = new Error(e)
   error.status = statusCode
   error.message = message
@@ -23,5 +23,5 @@ const catchResponse = (e, statusCode = 404, message = "") => {
 module.exports = {
   successResponse,
   errorResponse,
-  catchResponse
+  catchResponse,
 }

@@ -1,17 +1,18 @@
 const Post = require('../models/post')
-const User = require('../models/user')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
+
+require('../models/user')
 
 exports.getPosts = async (req, res, next) => {
   try {
-    const timeSort = req.query.timeSort == "asc" ? "createdAt" : "-createdAt"
-    const q = req.query.keyword !== undefined ? { "content": new RegExp(req.query.keyword) } : {};
+    const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt'
+    const q = req.query.keyword !== undefined ? { content: new RegExp(req.query.keyword) } : {}
     const posts = await Post
       .find(q)
       .populate({
         path: 'user',
-        select: 'name photo'
-      }).sort(timeSort);
+        select: 'name photo',
+      }).sort(timeSort)
 
     successResponse(res, 200, posts)
   } catch (e) {
@@ -22,17 +23,17 @@ exports.getPosts = async (req, res, next) => {
 
 exports.createPost = async (req, res, next) => {
   try {
-    const { user, content, image } = req.body;
+    const { user, content, image } = req.body
 
     if (!user || !content) {
-      errorResponse(res, 400, "使用者及內文需必填！");
+      errorResponse(res, 400, '使用者及內文需必填！')
       return
     }
 
-    await Post.create({ user, content, image });
+    await Post.create({ user, content, image })
 
-    const posts = await Post.find();
-    successResponse(res, 200, posts);
+    const posts = await Post.find()
+    successResponse(res, 200, posts)
   } catch (e) {
     console.error(e)
     errorResponse(res, 400, '建立 Post 有誤')
@@ -67,10 +68,10 @@ exports.deletePost = async (req, res, next) => {
 exports.updatePost = async (req, res, next) => {
   try {
     const postId = req.params.postId
-    const { content } = req.body;
+    const { content } = req.body
 
     if (!content) {
-      errorResponse(res, 400, "內文需必填！");
+      errorResponse(res, 400, '內文需必填！')
       return
     }
 

@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "devstart": "nodemon ./bin/www"
+    "devstart": "nodemon ./bin/www",
+    "lint": "eslint '**/*.{js,jsx}' --fix"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
@@ -27,5 +28,12 @@
     "passport-google-oauth": "^2.0.0",
     "pug": "2.0.0-beta11",
     "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.14.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.2.0",
+    "eslint-plugin-promise": "^6.0.0"
   }
 }

@@ -4,8 +4,8 @@
  * https://github.com/jaredhanson/passport-facebook
  */
 
-var passport = require('passport');
-var Strategy = require('passport-facebook');
+const passport = require('passport')
+const Strategy = require('passport-facebook')
 
 // Configure the Facebook strategy for use by Passport.
 //
@@ -28,21 +28,21 @@ passport.use(
       // allows for account linking and authentication with other identity
       // providers.
       console.log('FB Profile', profile)
-      return cb(null, profile);
-    }
-  )
-);
+      return cb(null, profile)
+    },
+  ),
+)
 
 // 可設定要將哪些 user 資訊，儲存在 Session 中的 passport.user
 passport.serializeUser(function (user, cb) {
   // console.log('serializeUser', user)
-  cb(null, user);
-});
+  cb(null, user)
+})
 
 // 可藉由從 Session 中獲得的資訊去撈該 user 的資料
 passport.deserializeUser(function (obj, cb) {
   // console.log('deserializeUser', obj)
-  cb(null, obj);
-});
+  cb(null, obj)
+})
 
 module.exports = passport
