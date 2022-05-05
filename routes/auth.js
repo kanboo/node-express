@@ -4,8 +4,8 @@ const router = express.Router()
 const passport = require('passport')
 
 // 引入 passport 設定
-require('../utils/passportGoogle')
-require('../utils/passportFacebook')
+require('../services/passportGoogle')
+require('../services/passportFacebook')
 
 const AuthController = require('../controllers/auth')
 
