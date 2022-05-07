@@ -4,8 +4,9 @@ const successResponse = (res, statusCode, data) => {
   })
 }
 
-const errorResponse = (res, statusCode, message) => {
+const errorResponse = (res, statusCode, message, errorType) => {
   res.status(statusCode).json({
+    errorType,
     message,
   })
 }
