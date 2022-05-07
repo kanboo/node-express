@@ -1,4 +1,3 @@
-const createError = require('http-errors')
 const express = require('express')
 const session = require('express-session')
 const path = require('path')
@@ -8,6 +7,7 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const MongoStore = require('connect-mongo')
 const passport = require('passport')
+const { catchErrorDev, catchErrorProd } = require('./utils/responseHandle')
 
 require('dotenv').config()
 
@@ -21,6 +21,14 @@ mongoose.connect(process.env.MONGODB_CONNECT)
   .catch((e) => console.error(e))
 
 const app = express()
+
+// 程式出現重大錯誤時
+process.on('uncaughtException', (err) => {
+  // 記錄錯誤下來，等到服務都處理完後，停掉該 process
+  console.error('漏洞：Uncaughted Exception(出事拉，阿北！)')
+  console.error(err)
+  process.exit(1)
+})
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -51,20 +59,35 @@ app.use('/auth', authRouter)
 app.use('/api/posts', postRouter)
 app.use('/api/images', imageRouter)
 
-// catch 404 and forward to error handler
+// 404 錯誤
 app.use(function (req, res, next) {
-  next(createError(404))
+  res.status(404).json({
+    message: '無此路由資訊',
+  })
 })
 
-// error handler
+/**
+ * 錯誤處理
+ */
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message
-  res.locals.error = req.app.get('env') === 'development' ? err : {}
+  // For Dev
+  if (process.env.NODE_ENV === 'dev') {
+    return catchErrorDev(err, res)
+  }
 
-  // render the error page
-  res.status(err.status || 500)
-  res.render('error')
+  // For Production
+  if (err.name === 'ValidationError') {
+    err.status = 400
+    err.message = '資料欄位未填寫正確，請重新輸入！'
+    return catchErrorProd(err, res)
+  }
+
+  catchErrorProd(err, res)
+})
+
+// 未捕捉到的 catch
+process.on('unhandledRejection', (err, promise) => {
+  console.error('漏洞：未捕捉到的 rejection：', promise, '原因：', err)
 })
 
 module.exports = app

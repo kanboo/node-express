@@ -1,9 +1,10 @@
 const Post = require('../models/post')
+const handleErrorAsync = require('../utils/handleErrorAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
 
 require('../models/user')
 
-exports.getPosts = async (req, res, next) => {
+exports.getPosts = handleErrorAsync(async (req, res, next) => {
   try {
     const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt'
     const q = req.query.keyword !== undefined ? { content: new RegExp(req.query.keyword) } : {}
@@ -19,9 +20,9 @@ exports.getPosts = async (req, res, next) => {
     console.error(e)
     errorResponse(res, 400, '取得 Posts 有誤')
   }
-}
+})
 
-exports.createPost = async (req, res, next) => {
+exports.createPost = handleErrorAsync(async (req, res, next) => {
   try {
     const { user, content, image } = req.body
 
@@ -38,8 +39,9 @@ exports.createPost = async (req, res, next) => {
     console.error(e)
     errorResponse(res, 400, '建立 Post 有誤')
   }
-}
-exports.deletePosts = async (req, res, next) => {
+})
+
+exports.deletePosts = handleErrorAsync(async (req, res, next) => {
   try {
     await Post.deleteMany({})
     successResponse(res, 200, [])
@@ -47,9 +49,9 @@ exports.deletePosts = async (req, res, next) => {
     console.error(e)
     errorResponse(res, 400, '刪除 Posts 有誤')
   }
-}
+})
 
-exports.deletePost = async (req, res, next) => {
+exports.deletePost = handleErrorAsync(async (req, res, next) => {
   try {
     const postId = req.params.postId
     const result = await Post.findByIdAndDelete(postId)
@@ -64,8 +66,9 @@ exports.deletePost = async (req, res, next) => {
     console.error(e)
     errorResponse(res, 400, '刪除 Post 有誤')
   }
-}
-exports.updatePost = async (req, res, next) => {
+})
+
+exports.updatePost = handleErrorAsync(async (req, res, next) => {
   try {
     const postId = req.params.postId
     const { content } = req.body
@@ -87,4 +90,4 @@ exports.updatePost = async (req, res, next) => {
     console.error(e)
     errorResponse(res, 400, '更新 Post 有誤')
   }
-}
+})
