@@ -38,4 +38,25 @@ router.post(
   UserController.register,
 )
 
+/**
+ * 登入
+ */
+const loginValidateRule = [
+  body('email')
+    .isEmail()
+    .notEmpty()
+    .withMessage('Email invalid'),
+  body('password')
+    .trim()
+    .notEmpty()
+    .withMessage('Password invalid'),
+]
+
+router.post(
+  '/login',
+  loginValidateRule,
+  checkVerification,
+  UserController.login,
+)
+
 module.exports = router

@@ -41,3 +41,29 @@ exports.register = handleErrorAsync(async (req, res, next) => {
     },
   })
 })
+
+/**
+ * 登入
+ */
+exports.login = handleErrorAsync(async (req, res, next) => {
+  const { email, password } = req.body
+
+  const user = await User.findOne({ email }, { _id: 1, name: 1, password: 1, photo: 1 })
+  if (!user) { return errorResponse(res, 400, '帳號密碼有誤！') }
+
+  const isValidated = await bcrypt.compare(password, user.password)
+  if (!isValidated) { return errorResponse(res, 400, '帳號密碼有誤！') }
+
+  const token = generateJWT({
+    id: user._id,
+    name: user.name,
+  })
+
+  successResponse(res, 200, {
+    token,
+    user: {
+      name: user.name,
+      photo: user.photo,
+    },
+  })
+})
