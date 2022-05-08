@@ -94,9 +94,11 @@ const userRouter = require('./routes/user')
 const postRouter = require('./routes/post')
 const imageRouter = require('./routes/image')
 
+const authenticationAndGetUser = require('./middleware/authenticationAndGetUser')
+
 app.use('/api/users', userRouter)
-app.use('/api/posts', postRouter)
-app.use('/api/images', imageRouter)
+app.use('/api/posts', authenticationAndGetUser, postRouter)
+app.use('/api/images', authenticationAndGetUser, imageRouter)
 
 /**
  * 404 錯誤
