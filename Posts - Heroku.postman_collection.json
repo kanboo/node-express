@@ -6,129 +6,283 @@
 	},
 	"item": [
 		{
-			"name": "取得所有待辦事項",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://infinite-wildwood-24756.herokuapp.com/api/posts",
-					"protocol": "https",
-					"host": [
-						"infinite-wildwood-24756",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"posts"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "刪除所有待辦事項",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "https://infinite-wildwood-24756.herokuapp.com/api/posts",
-					"protocol": "https",
-					"host": [
-						"infinite-wildwood-24756",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"posts"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "刪除單筆待辦事項",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "https://infinite-wildwood-24756.herokuapp.com/api/posts/626f3c155fda69b8319069b0",
-					"protocol": "https",
-					"host": [
-						"infinite-wildwood-24756",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"posts",
-						"626f3c155fda69b8319069b0"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "新增待辦事項",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"user\": \"626e1a1e06f150686b003e03\",\n    \"content\": \"這是一篇測試文章2\",\n    \"image\": \"https://i.imgur.com/IN5SxJx.png\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Auth",
+			"item": [
+				{
+					"name": "註冊",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Admin\",\n    \"email\": \"admin@gmail.com\",\n    \"password\": \"1234\",\n    \"confirmPassword\": \"1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://infinite-wildwood-24756.herokuapp.com/api/users/register",
+							"protocol": "https",
+							"host": [
+								"infinite-wildwood-24756",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "https://infinite-wildwood-24756.herokuapp.com/api/posts",
-					"protocol": "https",
-					"host": [
-						"infinite-wildwood-24756",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"posts"
-					]
+				{
+					"name": "登入",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@gmail.com\",\n    \"password\": \"1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://infinite-wildwood-24756.herokuapp.com/api/users/login",
+							"protocol": "https",
+							"host": [
+								"infinite-wildwood-24756",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得 User 資訊",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNzc1YmQ2YmMzOGI5NGM5YTlhZjllOCIsIm5hbWUiOiJBZG1pbiIsImlhdCI6MTY1MTk4OTQ4NiwiZXhwIjoxNjgzNTI1NDg2fQ.4mUqdx6koDcdBoNzzvZOd2gXbxqmXdk38gX6oC4KQBc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://infinite-wildwood-24756.herokuapp.com/api/users/profile",
+							"protocol": "https",
+							"host": [
+								"infinite-wildwood-24756",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "更新待辦事項",
-			"request": {
-				"method": "PATCH",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"content\": \"這是一篇測試文章2 - 變更內容\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Posts",
+			"item": [
+				{
+					"name": "取得所有待辦事項",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNzc1YmQ2YmMzOGI5NGM5YTlhZjllOCIsIm5hbWUiOiJBZG1pbiIsImlhdCI6MTY1MjAwMDMyNCwiZXhwIjoxNjgzNTM2MzI0fQ.IQH1FJpKDsXdosMfT75YApe4i4fHNRnX2lYSeQOHea8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://infinite-wildwood-24756.herokuapp.com/api/posts",
+							"protocol": "https",
+							"host": [
+								"infinite-wildwood-24756",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"posts"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "https://infinite-wildwood-24756.herokuapp.com/api/posts/626f3c155fda69b8319069b0",
-					"protocol": "https",
-					"host": [
-						"infinite-wildwood-24756",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"posts",
-						"626f3c155fda69b8319069b0"
-					]
+				{
+					"name": "刪除所有待辦事項",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNzc1YmQ2YmMzOGI5NGM5YTlhZjllOCIsIm5hbWUiOiJBZG1pbiIsImlhdCI6MTY1MjAwMDMyNCwiZXhwIjoxNjgzNTM2MzI0fQ.IQH1FJpKDsXdosMfT75YApe4i4fHNRnX2lYSeQOHea8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://infinite-wildwood-24756.herokuapp.com/api/posts",
+							"protocol": "https",
+							"host": [
+								"infinite-wildwood-24756",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "刪除單筆待辦事項",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNzc1YmQ2YmMzOGI5NGM5YTlhZjllOCIsIm5hbWUiOiJBZG1pbiIsImlhdCI6MTY1MjAwMDMyNCwiZXhwIjoxNjgzNTM2MzI0fQ.IQH1FJpKDsXdosMfT75YApe4i4fHNRnX2lYSeQOHea8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://infinite-wildwood-24756.herokuapp.com/api/posts/62776b8cc0b00475a08abbf3",
+							"protocol": "https",
+							"host": [
+								"infinite-wildwood-24756",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"posts",
+								"62776b8cc0b00475a08abbf3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "新增待辦事項",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNzc1YmQ2YmMzOGI5NGM5YTlhZjllOCIsIm5hbWUiOiJBZG1pbiIsImlhdCI6MTY1MjAwMDMyNCwiZXhwIjoxNjgzNTM2MzI0fQ.IQH1FJpKDsXdosMfT75YApe4i4fHNRnX2lYSeQOHea8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user\": \"626e1a1e06f150686b003e04\",\n    \"content\": \"這是一篇測試文章4\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://infinite-wildwood-24756.herokuapp.com/api/posts",
+							"protocol": "https",
+							"host": [
+								"infinite-wildwood-24756",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "更新待辦事項",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyNzc1YmQ2YmMzOGI5NGM5YTlhZjllOCIsIm5hbWUiOiJBZG1pbiIsImlhdCI6MTY1MjAwMDMyNCwiZXhwIjoxNjgzNTM2MzI0fQ.IQH1FJpKDsXdosMfT75YApe4i4fHNRnX2lYSeQOHea8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"這是一篇測試文章4 - 變更內容\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://infinite-wildwood-24756.herokuapp.com/api/posts/626812f2e7e17e7c8afef14a",
+							"protocol": "https",
+							"host": [
+								"infinite-wildwood-24756",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"posts",
+								"626812f2e7e17e7c8afef14a"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	]
 }
