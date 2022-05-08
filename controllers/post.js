@@ -23,14 +23,12 @@ exports.getPosts = handleErrorAsync(async (req, res, next) => {
 })
 
 exports.createPost = handleErrorAsync(async (req, res, next) => {
-  const { user, content, image } = req.body
+  // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
+  const userId = req.user?._id
 
-  if (!user || !content) {
-    errorResponse(res, 400, '使用者及內文需必填！')
-    return
-  }
+  const { content, image } = req.body
 
-  const newPost = await Post.create({ user, content, image })
+  const newPost = await Post.create({ user: userId, content, image })
 
   if (newPost) {
     successResponse(res, 200, { id: newPost._id })
@@ -64,10 +62,6 @@ exports.deletePost = handleErrorAsync(async (req, res, next) => {
 exports.updatePost = handleErrorAsync(async (req, res, next) => {
   const postId = req.params.postId
   const { content } = req.body
-
-  if (!content) {
-    return errorResponse(res, 400, '內文需必填！')
-  }
 
   const post = await Post.findByIdAndUpdate(postId, { content })
 
