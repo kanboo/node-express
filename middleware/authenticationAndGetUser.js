@@ -23,7 +23,6 @@ module.exports = handleErrorAsync(async (req, res, next) => {
         // Errors & Codes
         // ref：https://www.npmjs.com/package/jsonwebtoken#errors--codes
 
-        console.log(err.name, err.message)
         // 無效的 Token
         if (err.name === 'JsonWebTokenError') {
           return errorResponse(res, 401, 'Unauthorized')
@@ -39,8 +38,8 @@ module.exports = handleErrorAsync(async (req, res, next) => {
           return errorResponse(res, 401, '權限未生效，請洽管理員！')
         }
 
-        console.log('JWT Error', token)
-        console.log(err.message)
+        console.error('JWT Error', token)
+        console.error(err.message)
         return errorResponse(res, 401, 'Unauthorized')
       } else {
         resolve(payload)

@@ -36,6 +36,7 @@ exports.register = handleErrorAsync(async (req, res, next) => {
   successResponse(res, 200, {
     token,
     user: {
+      id: user._id,
       name: newUser.name,
       photo: newUser.photo,
     },
@@ -62,6 +63,7 @@ exports.login = handleErrorAsync(async (req, res, next) => {
   successResponse(res, 200, {
     token,
     user: {
+      id: user._id,
       name: user.name,
       photo: user.photo,
     },
@@ -73,7 +75,11 @@ exports.login = handleErrorAsync(async (req, res, next) => {
  */
 exports.profile = handleErrorAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
-  const { name, photo } = req.user
+  const user = {
+    id: req.user?._id,
+    name: req.user?.name,
+    photo: req.user?.photo,
+  }
 
-  successResponse(res, 200, { name, photo })
+  successResponse(res, 200, user)
 })
