@@ -67,3 +67,13 @@ exports.login = handleErrorAsync(async (req, res, next) => {
     },
   })
 })
+
+/**
+ * 取得 User 資訊
+ */
+exports.profile = handleErrorAsync(async (req, res, next) => {
+  // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
+  const { name, photo } = req.user
+
+  successResponse(res, 200, { name, photo })
+})

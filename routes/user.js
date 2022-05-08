@@ -3,6 +3,7 @@ const router = express.Router()
 
 const { body } = require('express-validator')
 const checkVerification = require('../middleware/checkVerification')
+const authenticationAndGetUser = require('../middleware/authenticationAndGetUser')
 
 const UserController = require('../controllers/user')
 
@@ -57,6 +58,15 @@ router.post(
   loginValidateRule,
   checkVerification,
   UserController.login,
+)
+
+/**
+ * 取得 User 資訊
+ */
+router.get(
+  '/profile',
+  authenticationAndGetUser,
+  UserController.profile,
 )
 
 module.exports = router
