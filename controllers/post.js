@@ -1,90 +1,79 @@
 const Post = require('../models/post')
+const handleErrorAsync = require('../utils/handleErrorAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
 
 require('../models/user')
 
-exports.getPosts = async (req, res, next) => {
-  try {
-    const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt'
-    const q = req.query.keyword !== undefined ? { content: new RegExp(req.query.keyword) } : {}
-    const posts = await Post
-      .find(q)
-      .populate({
-        path: 'user',
-        select: 'name photo',
-      }).sort(timeSort)
+exports.getPosts = handleErrorAsync(async (req, res, next) => {
+  const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt'
+  const q = req.query.keyword !== undefined ? { content: new RegExp(req.query.keyword) } : {}
 
+  const posts = await Post
+    .find(q)
+    .populate({
+      path: 'user',
+      select: 'name photo',
+    }).sort(timeSort)
+
+  if (posts) {
     successResponse(res, 200, posts)
-  } catch (e) {
-    console.error(e)
-    errorResponse(res, 400, '取得 Posts 有誤')
+  } else {
+    errorResponse(res, 400, 'Posts 取得失敗')
   }
-}
+})
 
-exports.createPost = async (req, res, next) => {
-  try {
-    const { user, content, image } = req.body
+exports.createPost = handleErrorAsync(async (req, res, next) => {
+  const { user, content, image } = req.body
 
-    if (!user || !content) {
-      errorResponse(res, 400, '使用者及內文需必填！')
-      return
-    }
-
-    await Post.create({ user, content, image })
-
-    const posts = await Post.find()
-    successResponse(res, 200, posts)
-  } catch (e) {
-    console.error(e)
-    errorResponse(res, 400, '建立 Post 有誤')
+  if (!user || !content) {
+    errorResponse(res, 400, '使用者及內文需必填！')
+    return
   }
-}
-exports.deletePosts = async (req, res, next) => {
-  try {
-    await Post.deleteMany({})
-    successResponse(res, 200, [])
-  } catch (e) {
-    console.error(e)
-    errorResponse(res, 400, '刪除 Posts 有誤')
+
+  const newPost = await Post.create({ user, content, image })
+
+  if (newPost) {
+    successResponse(res, 200, { id: newPost._id })
+  } else {
+    errorResponse(res, 400, 'Post 建立失敗')
   }
-}
+})
 
-exports.deletePost = async (req, res, next) => {
-  try {
-    const postId = req.params.postId
-    const result = await Post.findByIdAndDelete(postId)
+exports.deletePosts = handleErrorAsync(async (req, res, next) => {
+  const result = await Post.deleteMany({})
+  const isSucceeded = result?.acknowledged ?? false
 
-    if (result) {
-      const posts = await Post.find()
-      successResponse(res, 200, posts)
-    } else {
-      errorResponse(res, 400, '查無 Post')
-    }
-  } catch (e) {
-    console.error(e)
-    errorResponse(res, 400, '刪除 Post 有誤')
+  if (isSucceeded) {
+    successResponse(res, 200, { success: true })
+  } else {
+    errorResponse(res, 400, 'Posts 刪除失敗')
   }
-}
-exports.updatePost = async (req, res, next) => {
-  try {
-    const postId = req.params.postId
-    const { content } = req.body
+})
 
-    if (!content) {
-      errorResponse(res, 400, '內文需必填！')
-      return
-    }
+exports.deletePost = handleErrorAsync(async (req, res, next) => {
+  const postId = req.params.postId
+  const post = await Post.findByIdAndDelete(postId)
 
-    const result = await Post.findByIdAndUpdate(postId, { content })
-
-    if (result) {
-      const posts = await Post.find()
-      successResponse(res, 200, posts)
-    } else {
-      errorResponse(res, 400, '查無 Post')
-    }
-  } catch (e) {
-    console.error(e)
-    errorResponse(res, 400, '更新 Post 有誤')
+  if (post) {
+    successResponse(res, 200, { success: true })
+  } else {
+    errorResponse(res, 400, 'Post 刪除失敗')
   }
-}
+})
+
+exports.updatePost = handleErrorAsync(async (req, res, next) => {
+  const postId = req.params.postId
+  const { content } = req.body
+
+  if (!content) {
+    return errorResponse(res, 400, '內文需必填！')
+  }
+
+  const post = await Post.findByIdAndUpdate(postId, { content })
+
+  if (post) {
+    successResponse(res, 200, { success: true })
+  } else {
+    errorResponse(res, 400, 'Post 更新失敗')
+  }
+})

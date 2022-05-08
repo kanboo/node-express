@@ -1,7 +1,8 @@
+const handleErrorAsync = require('../utils/handleErrorAsync')
 const { successResponse } = require('../utils/responseHandle')
 
 // 前端打 API 取得 Google 登入資訊
-exports.getGoogleAuthByFrontend = async (req, res, next) => {
+exports.getGoogleAuthByFrontend = handleErrorAsync(async (req, res, next) => {
   // 引入官方的套件
   const { OAuth2Client } = require('google-auth-library')
   const CLIENT_ID = process.env.GOOGLE_CLIENT_ID
@@ -20,4 +21,4 @@ exports.getGoogleAuthByFrontend = async (req, res, next) => {
   // 以下就個人需求看要拿資料做哪些使用
   // ex 使用者資訊存入資料庫，把資料存到 session內 等等
   successResponse(res, 200, ticket)
-}
+})

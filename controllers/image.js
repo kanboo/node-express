@@ -1,8 +1,9 @@
 const { ImgurClient } = require('imgur')
 const client = new ImgurClient({ accessToken: process.env.IMGUR_ACCESS_TOKEN })
+const handleErrorAsync = require('../utils/handleErrorAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
 
-exports.createImage = async (req, res, next) => {
+exports.createImage = handleErrorAsync(async (req, res, next) => {
   if (!req.file) {
     errorResponse(res, 400, 'No File Selected')
   } else {
@@ -19,4 +20,4 @@ exports.createImage = async (req, res, next) => {
       errorResponse(res, 400, 'Upload image fail')
     }
   }
-}
+})
