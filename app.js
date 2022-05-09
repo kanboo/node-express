@@ -25,7 +25,7 @@ const MongoStore = require('connect-mongo')
 app.use(session({
   secret: 'verySecret',
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     maxAge: 1000 * 60 * 30,
   },
