@@ -36,7 +36,7 @@ exports.register = handleErrorAsync(async (req, res, next) => {
   successResponse(res, 200, {
     token,
     user: {
-      id: user._id,
+      id: newUser._id,
       name: newUser.name,
       photo: newUser.photo,
     },
