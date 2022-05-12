@@ -7,6 +7,20 @@ const getSocketIO = () => io
 const init = () => {
   io.on('connection', (socket) => {
     console.log('connection', socket.id)
+
+    /**
+     * Socket.io 常用的 API
+     * @url https://ithelp.ithome.com.tw/articles/10276725
+     */
+    socket.on('post:create', (payload) => {
+      console.log('post:create', payload)
+
+      // 給除了自己以外的使用者廣播訊息
+      socket.broadcast.emit('post:create', payload)
+
+      // 給所有使用者廣播訊息(含自己)
+      // io.emit('post:create', payload)
+    })
   })
 }
 
