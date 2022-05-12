@@ -1,4 +1,7 @@
 const Post = require('../models/post')
+
+const { triggerSocketNotification } = require('../services/socketIO')
+
 const handleErrorAsync = require('../utils/handleErrorAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
 
@@ -32,6 +35,9 @@ exports.createPost = handleErrorAsync(async (req, res, next) => {
 
   if (newPost) {
     successResponse(res, 200, { id: newPost._id })
+
+    // Socket 通知
+    triggerSocketNotification('post:create', { id: newPost._id })
   } else {
     errorResponse(res, 400, 'Post 建立失敗')
   }
