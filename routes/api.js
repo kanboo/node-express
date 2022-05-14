@@ -107,7 +107,50 @@ router.post(
 router.get(
   '/user/profile',
   authenticationAndGetUser,
-  UserController.profile,
+  UserController.getProfile,
+)
+
+const profileValidateRule = [
+  body('name')
+    .trim()
+    .isLength({ min: 2 })
+    .withMessage('Name invalid'),
+  body('gender')
+    .trim()
+    .notEmpty()
+    .withMessage('Gender invalid')
+    .isIn(['male', 'female'])
+    .withMessage('Gender invalid, male or female'),
+]
+
+router.patch(
+  '/user/profile',
+  authenticationAndGetUser,
+  profileValidateRule,
+  checkVerification,
+  UserController.updateProfile,
+)
+
+const passwordValidateRule = [
+  body('newPassword')
+    .trim()
+    .isLength({ min: 4 })
+    .withMessage('NewPassword invalid'),
+  body('confirmPassword')
+    .trim()
+    .custom((value, { req }) => {
+      if (value !== req.body.newPassword) {
+        throw new Error('Password invalid')
+      }
+      return true
+    }),
+]
+router.patch(
+  '/user/update-password',
+  authenticationAndGetUser,
+  passwordValidateRule,
+  checkVerification,
+  UserController.updatePassword,
 )
 
 /**
