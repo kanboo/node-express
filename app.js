@@ -90,15 +90,8 @@ app.use('/', indexRouter)
 app.use('/auth', authRouter)
 
 // For API
-const userRouter = require('./routes/user')
-const postRouter = require('./routes/post')
-const imageRouter = require('./routes/image')
-
-const authenticationAndGetUser = require('./middleware/authenticationAndGetUser')
-
-app.use('/api/users', userRouter)
-app.use('/api/posts', authenticationAndGetUser, postRouter)
-app.use('/api/images', authenticationAndGetUser, imageRouter)
+const apiRouter = require('./routes/api')
+app.use('/api/v1', apiRouter)
 
 /**
  * 404 錯誤
