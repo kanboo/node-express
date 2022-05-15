@@ -1,8 +1,72 @@
-const handleErrorAsync = require('../utils/handleErrorAsync')
-const { successResponse } = require('../utils/responseHandle')
+// Third Party Kit
+const bcrypt = require('bcrypt')
 
-// 前端打 API 取得 Google 登入資訊
-exports.getGoogleAuthByFrontend = handleErrorAsync(async (req, res, next) => {
+// Models
+const User = require('../models/user')
+
+// Services
+const generateJWT = require('../services/generateJWT.js')
+
+// Utils
+const handleErrorAsync = require('../utils/handleErrorAsync')
+const { successResponse, errorResponse } = require('../utils/responseHandle')
+const filteredUserInfo = require('../utils/filteredUserInfo')
+
+const apiErrorTypes = require('../constants/apiErrorTypes')
+
+/**
+ * 註冊
+ */
+const register = handleErrorAsync(async (req, res, next) => {
+  const { name, email, password } = req.body
+
+  const user = await User.findOne({ email })
+  if (user) { return errorResponse(res, 400, '此 Mail 已註冊！', apiErrorTypes.EMAIL_EXISTS) }
+
+  // 加密密碼
+  const hashPassword = await bcrypt.hash(password, 12)
+
+  // 建立新 user
+  const newUser = await User.create({ name, email, password: hashPassword })
+
+  const token = generateJWT({
+    id: newUser._id,
+    name: newUser.name,
+  })
+
+  successResponse(res, 200, {
+    token,
+    user: filteredUserInfo(newUser),
+  })
+})
+
+/**
+ * 登入
+ */
+const login = handleErrorAsync(async (req, res, next) => {
+  const { email, password } = req.body
+
+  const user = await User.findOne({ email }).select('+password')
+  if (!user) { return errorResponse(res, 400, '帳號密碼有誤！') }
+
+  const isValidated = await bcrypt.compare(password, user.password)
+  if (!isValidated) { return errorResponse(res, 400, '帳號密碼有誤！') }
+
+  const token = generateJWT({
+    id: user._id,
+    name: user.name,
+  })
+
+  successResponse(res, 200, {
+    token,
+    user: filteredUserInfo(user),
+  })
+})
+
+/**
+ * 前端打 API 取得 Google 登入資訊
+ */
+const getGoogleAuthByFrontend = handleErrorAsync(async (req, res, next) => {
   // 引入官方的套件
   const { OAuth2Client } = require('google-auth-library')
   const CLIENT_ID = process.env.GOOGLE_CLIENT_ID
@@ -22,3 +86,9 @@ exports.getGoogleAuthByFrontend = handleErrorAsync(async (req, res, next) => {
   // ex 使用者資訊存入資料庫，把資料存到 session內 等等
   successResponse(res, 200, ticket)
 })
+
+module.exports = {
+  register,
+  login,
+  getGoogleAuthByFrontend,
+}

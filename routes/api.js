@@ -51,12 +51,17 @@ router.post(
 )
 
 /**
+ * 註冊 & 登入
+ */
+const AuthController = require('../controllers/auth')
+
+router.post('/auth/register', userValidation.register, checkVerification, AuthController.register)
+router.post('/auth/login', userValidation.login, checkVerification, AuthController.login)
+
+/**
  * User 使用者
  */
 const UserController = require('../controllers/user')
-
-router.post('/user/register', userValidation.register, checkVerification, UserController.register)
-router.post('/user/login', userValidation.login, checkVerification, UserController.login)
 
 router
   .route('/user/profile')
