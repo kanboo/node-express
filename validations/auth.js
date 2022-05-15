@@ -19,7 +19,7 @@ const register = [
     .trim()
     .custom((value, { req }) => {
       if (value !== req.body.password) {
-        throw new Error('Password invalid')
+        throw new Error('ConfirmPassword invalid')
       }
       return true
     }),

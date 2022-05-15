@@ -28,7 +28,7 @@ const updatePassword = [
     .trim()
     .custom((value, { req }) => {
       if (value !== req.body.newPassword) {
-        throw new Error('Password invalid')
+        throw new Error('ConfirmPassword invalid')
       }
       return true
     }),
