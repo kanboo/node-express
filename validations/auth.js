@@ -1,9 +1,11 @@
 const { body } = require('express-validator')
 
+const validate = require('../services/validate')
+
 /**
  * 註冊
  */
-const register = [
+const register = validate([
   body('name')
     .trim()
     .isLength({ min: 2 })
@@ -23,12 +25,12 @@ const register = [
       }
       return true
     }),
-]
+])
 
 /**
  * 登入
  */
-const login = [
+const login = validate([
   body('email')
     .isEmail()
     .notEmpty()
@@ -37,7 +39,7 @@ const login = [
     .trim()
     .notEmpty()
     .withMessage('Password invalid'),
-]
+])
 
 module.exports = {
   register,

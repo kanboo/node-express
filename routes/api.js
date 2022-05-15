@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 
-const checkVerification = require('../middleware/checkVerification')
 const authenticationAndGetUser = require('../middleware/authenticationAndGetUser')
 
 const { errorResponse } = require('../utils/responseHandle')
@@ -56,8 +55,8 @@ router.post(
  */
 const AuthController = require('../controllers/auth')
 
-router.post('/auth/register', authValidation.register, checkVerification, AuthController.register)
-router.post('/auth/login', authValidation.login, checkVerification, AuthController.login)
+router.post('/auth/register', authValidation.register, AuthController.register)
+router.post('/auth/login', authValidation.login, AuthController.login)
 
 /**
  * User 使用者
@@ -67,9 +66,9 @@ const UserController = require('../controllers/user')
 router
   .route('/user/profile')
   .get(authenticationAndGetUser, UserController.getProfile)
-  .patch(authenticationAndGetUser, userValidation.updateUser, checkVerification, UserController.updateProfile)
+  .patch(authenticationAndGetUser, userValidation.updateUser, UserController.updateProfile)
 
-router.post('/user/update-password', authenticationAndGetUser, userValidation.updatePassword, checkVerification, UserController.updatePassword)
+router.post('/user/update-password', authenticationAndGetUser, userValidation.updatePassword, UserController.updatePassword)
 
 /**
  * Post 貼文
@@ -81,11 +80,11 @@ router
   .get(authenticationAndGetUser, PostController.getPosts)
   .delete(authenticationAndGetUser, PostController.deletePosts)
 
-router.post('/post', authenticationAndGetUser, postValidation.createPost, checkVerification, PostController.createPost)
+router.post('/post', authenticationAndGetUser, postValidation.createPost, PostController.createPost)
 
 router
   .route('/post/:postId')
   .delete(authenticationAndGetUser, PostController.deletePost)
-  .patch(authenticationAndGetUser, postValidation.updatePost, checkVerification, PostController.updatePost)
+  .patch(authenticationAndGetUser, postValidation.updatePost, PostController.updatePost)
 
 module.exports = router

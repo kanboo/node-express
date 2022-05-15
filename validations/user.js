@@ -1,9 +1,11 @@
 const { body } = require('express-validator')
 
+const validate = require('../services/validate')
+
 /**
  * 更新 User
  */
-const updateUser = [
+const updateUser = validate([
   body('name')
     .trim()
     .isLength({ min: 2 })
@@ -14,12 +16,12 @@ const updateUser = [
     .withMessage('Gender invalid')
     .isIn(['male', 'female'])
     .withMessage('Gender invalid, male or female'),
-]
+])
 
 /**
  * 更新 Password
  */
-const updatePassword = [
+const updatePassword = validate([
   body('newPassword')
     .trim()
     .isLength({ min: 4 })
@@ -32,7 +34,7 @@ const updatePassword = [
       }
       return true
     }),
-]
+])
 
 module.exports = {
   updateUser,
