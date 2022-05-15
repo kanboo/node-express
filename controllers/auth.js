@@ -8,7 +8,7 @@ const User = require('../models/user')
 const generateJWT = require('../services/generateJWT.js')
 
 // Utils
-const handleErrorAsync = require('../utils/handleErrorAsync')
+const catchAsync = require('../utils/catchAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
 const filteredUserInfo = require('../utils/filteredUserInfo')
 
@@ -17,7 +17,7 @@ const apiErrorTypes = require('../constants/apiErrorTypes')
 /**
  * 註冊
  */
-const register = handleErrorAsync(async (req, res, next) => {
+const register = catchAsync(async (req, res, next) => {
   const { name, email, password } = req.body
 
   const user = await User.findOne({ email })
@@ -43,7 +43,7 @@ const register = handleErrorAsync(async (req, res, next) => {
 /**
  * 登入
  */
-const login = handleErrorAsync(async (req, res, next) => {
+const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body
 
   const user = await User.findOne({ email }).select('+password')
@@ -66,7 +66,7 @@ const login = handleErrorAsync(async (req, res, next) => {
 /**
  * 前端打 API 取得 Google 登入資訊
  */
-const getGoogleAuthByFrontend = handleErrorAsync(async (req, res, next) => {
+const getGoogleAuthByFrontend = catchAsync(async (req, res, next) => {
   // 引入官方的套件
   const { OAuth2Client } = require('google-auth-library')
   const CLIENT_ID = process.env.GOOGLE_CLIENT_ID

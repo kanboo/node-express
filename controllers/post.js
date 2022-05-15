@@ -1,11 +1,11 @@
 const Post = require('../models/post')
 
-const handleErrorAsync = require('../utils/handleErrorAsync')
+const catchAsync = require('../utils/catchAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
 
 require('../models/user')
 
-const getPosts = handleErrorAsync(async (req, res, next) => {
+const getPosts = catchAsync(async (req, res, next) => {
   const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt'
   const q = req.query.keyword !== undefined ? { content: new RegExp(req.query.keyword) } : {}
 
@@ -23,7 +23,7 @@ const getPosts = handleErrorAsync(async (req, res, next) => {
   }
 })
 
-const createPost = handleErrorAsync(async (req, res, next) => {
+const createPost = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
 
@@ -38,7 +38,7 @@ const createPost = handleErrorAsync(async (req, res, next) => {
   }
 })
 
-const deletePosts = handleErrorAsync(async (req, res, next) => {
+const deletePosts = catchAsync(async (req, res, next) => {
   const result = await Post.deleteMany({})
   const isSucceeded = result?.acknowledged ?? false
 
@@ -49,7 +49,7 @@ const deletePosts = handleErrorAsync(async (req, res, next) => {
   }
 })
 
-const deletePost = handleErrorAsync(async (req, res, next) => {
+const deletePost = catchAsync(async (req, res, next) => {
   const postId = req.params.postId
   const post = await Post.findByIdAndDelete(postId)
 
@@ -60,7 +60,7 @@ const deletePost = handleErrorAsync(async (req, res, next) => {
   }
 })
 
-const updatePost = handleErrorAsync(async (req, res, next) => {
+const updatePost = catchAsync(async (req, res, next) => {
   const postId = req.params.postId
   const { content } = req.body
 

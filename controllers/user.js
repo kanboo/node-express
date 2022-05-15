@@ -5,14 +5,14 @@ const bcrypt = require('bcrypt')
 const User = require('../models/user')
 
 // Utils
-const handleErrorAsync = require('../utils/handleErrorAsync')
+const catchAsync = require('../utils/catchAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
 const filteredUserInfo = require('../utils/filteredUserInfo')
 
 /**
  * 取得 User 資訊
  */
-const getProfile = handleErrorAsync(async (req, res, next) => {
+const getProfile = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const user = filteredUserInfo(req.user)
 
@@ -22,7 +22,7 @@ const getProfile = handleErrorAsync(async (req, res, next) => {
 /**
  * 更新 User 資訊
  */
-const updateProfile = handleErrorAsync(async (req, res, next) => {
+const updateProfile = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
 
@@ -40,7 +40,7 @@ const updateProfile = handleErrorAsync(async (req, res, next) => {
 /**
  * 更新 User 密碼
  */
-const updatePassword = handleErrorAsync(async (req, res, next) => {
+const updatePassword = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
 
