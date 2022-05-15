@@ -26,7 +26,7 @@ const filteredUserInfo = (user) => {
 /**
  * 註冊
  */
-exports.register = handleErrorAsync(async (req, res, next) => {
+const register = handleErrorAsync(async (req, res, next) => {
   const { name, email, password } = req.body
 
   const user = await User.findOne({ email })
@@ -52,7 +52,7 @@ exports.register = handleErrorAsync(async (req, res, next) => {
 /**
  * 登入
  */
-exports.login = handleErrorAsync(async (req, res, next) => {
+const login = handleErrorAsync(async (req, res, next) => {
   const { email, password } = req.body
 
   const user = await User.findOne({ email }).select('+password')
@@ -75,7 +75,7 @@ exports.login = handleErrorAsync(async (req, res, next) => {
 /**
  * 取得 User 資訊
  */
-exports.getProfile = handleErrorAsync(async (req, res, next) => {
+const getProfile = handleErrorAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const user = filteredUserInfo(req.user)
 
@@ -85,7 +85,7 @@ exports.getProfile = handleErrorAsync(async (req, res, next) => {
 /**
  * 更新 User 資訊
  */
-exports.updateProfile = handleErrorAsync(async (req, res, next) => {
+const updateProfile = handleErrorAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
 
@@ -103,7 +103,7 @@ exports.updateProfile = handleErrorAsync(async (req, res, next) => {
 /**
  * 更新 User 密碼
  */
-exports.updatePassword = handleErrorAsync(async (req, res, next) => {
+const updatePassword = handleErrorAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
 
@@ -117,3 +117,11 @@ exports.updatePassword = handleErrorAsync(async (req, res, next) => {
 
   successResponse(res, 200, { success: true })
 })
+
+module.exports = {
+  register,
+  login,
+  getProfile,
+  updateProfile,
+  updatePassword,
+}
