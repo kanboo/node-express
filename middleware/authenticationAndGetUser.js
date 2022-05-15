@@ -4,10 +4,10 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 
 // Utils
-const handleErrorAsync = require('../utils/handleErrorAsync')
+const catchAsync = require('../utils/catchAsync')
 const { errorResponse } = require('../utils/responseHandle')
 
-module.exports = handleErrorAsync(async (req, res, next) => {
+module.exports = catchAsync(async (req, res, next) => {
   // 取得 Token
   const authorization = req.headers?.authorization ?? ''
   const token = authorization?.split(' ')?.[1] ?? ''
