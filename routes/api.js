@@ -6,6 +6,7 @@ const authenticationAndGetUser = require('../middleware/authenticationAndGetUser
 
 const { errorResponse } = require('../utils/responseHandle')
 
+const authValidation = require('../validations/auth')
 const userValidation = require('../validations/user')
 const postValidation = require('../validations/post')
 
@@ -55,8 +56,8 @@ router.post(
  */
 const AuthController = require('../controllers/auth')
 
-router.post('/auth/register', userValidation.register, checkVerification, AuthController.register)
-router.post('/auth/login', userValidation.login, checkVerification, AuthController.login)
+router.post('/auth/register', authValidation.register, checkVerification, AuthController.register)
+router.post('/auth/login', authValidation.login, checkVerification, AuthController.login)
 
 /**
  * User 使用者
@@ -68,7 +69,7 @@ router
   .get(authenticationAndGetUser, UserController.getProfile)
   .patch(authenticationAndGetUser, userValidation.updateUser, checkVerification, UserController.updateProfile)
 
-router.patch('/user/update-password', authenticationAndGetUser, userValidation.updatePassword, checkVerification, UserController.updatePassword)
+router.post('/user/update-password', authenticationAndGetUser, userValidation.updatePassword, checkVerification, UserController.updatePassword)
 
 /**
  * Post 貼文
