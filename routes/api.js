@@ -1,12 +1,13 @@
 const express = require('express')
 const router = express.Router()
 
-const { body } = require('express-validator')
-
 const checkVerification = require('../middleware/checkVerification')
 const authenticationAndGetUser = require('../middleware/authenticationAndGetUser')
 
 const { errorResponse } = require('../utils/responseHandle')
+
+const userValidation = require('../validations/user')
+const postValidation = require('../validations/post')
 
 /**
  * Image 圖片管理
@@ -54,142 +55,31 @@ router.post(
  */
 const UserController = require('../controllers/user')
 
-// 註冊
-const registerValidateRule = [
-  body('name')
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage('Name invalid'),
-  body('email')
-    .isEmail()
-    .withMessage('Email invalid'),
-  body('password')
-    .trim()
-    .isLength({ min: 4 })
-    .withMessage('Password invalid'),
-  body('confirmPassword')
-    .trim()
-    .custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error('Password invalid')
-      }
-      return true
-    }),
-]
+router.post('/user/register', userValidation.register, checkVerification, UserController.register)
+router.post('/user/login', userValidation.login, checkVerification, UserController.login)
 
-router.post(
-  '/user/register',
-  registerValidateRule,
-  checkVerification,
-  UserController.register,
-)
+router
+  .route('/user/profile')
+  .get(authenticationAndGetUser, UserController.getProfile)
+  .patch(authenticationAndGetUser, userValidation.updateUser, checkVerification, UserController.updateProfile)
 
-// 登入
-const loginValidateRule = [
-  body('email')
-    .isEmail()
-    .notEmpty()
-    .withMessage('Email invalid'),
-  body('password')
-    .trim()
-    .notEmpty()
-    .withMessage('Password invalid'),
-]
-
-router.post(
-  '/user/login',
-  loginValidateRule,
-  checkVerification,
-  UserController.login,
-)
-
-// 取得 User 資訊
-router.get(
-  '/user/profile',
-  authenticationAndGetUser,
-  UserController.getProfile,
-)
-
-const profileValidateRule = [
-  body('name')
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage('Name invalid'),
-  body('gender')
-    .trim()
-    .notEmpty()
-    .withMessage('Gender invalid')
-    .isIn(['male', 'female'])
-    .withMessage('Gender invalid, male or female'),
-]
-
-router.patch(
-  '/user/profile',
-  authenticationAndGetUser,
-  profileValidateRule,
-  checkVerification,
-  UserController.updateProfile,
-)
-
-const passwordValidateRule = [
-  body('newPassword')
-    .trim()
-    .isLength({ min: 4 })
-    .withMessage('NewPassword invalid'),
-  body('confirmPassword')
-    .trim()
-    .custom((value, { req }) => {
-      if (value !== req.body.newPassword) {
-        throw new Error('Password invalid')
-      }
-      return true
-    }),
-]
-router.patch(
-  '/user/update-password',
-  authenticationAndGetUser,
-  passwordValidateRule,
-  checkVerification,
-  UserController.updatePassword,
-)
+router.patch('/user/update-password', authenticationAndGetUser, userValidation.updatePassword, checkVerification, UserController.updatePassword)
 
 /**
  * Post 貼文
  */
 const PostController = require('../controllers/post')
 
-router.get(
-  '/posts',
-  authenticationAndGetUser,
-  PostController.getPosts,
-)
+router
+  .route('/posts')
+  .get(authenticationAndGetUser, PostController.getPosts)
+  .delete(authenticationAndGetUser, PostController.deletePosts)
 
-router.delete(
-  '/posts',
-  authenticationAndGetUser,
-  PostController.deletePosts,
-)
+router.post('/post', authenticationAndGetUser, postValidation.createPost, checkVerification, PostController.createPost)
 
-router.post(
-  '/post',
-  authenticationAndGetUser,
-  [body('content').notEmpty().withMessage('內文需必填！')],
-  checkVerification,
-  PostController.createPost,
-)
-
-router.delete(
-  '/post/:postId',
-  authenticationAndGetUser,
-  PostController.deletePost,
-)
-
-router.patch(
-  '/post/:postId',
-  authenticationAndGetUser,
-  [body('content').notEmpty().withMessage('內文需必填！')],
-  checkVerification,
-  PostController.updatePost,
-)
+router
+  .route('/post/:postId')
+  .delete(authenticationAndGetUser, PostController.deletePost)
+  .patch(authenticationAndGetUser, postValidation.updatePost, checkVerification, PostController.updatePost)
 
 module.exports = router
