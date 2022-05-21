@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ['male', 'female'],
     },
+    follows: [{
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+    }],
   },
   {
     timestamps: true,

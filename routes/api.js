@@ -39,7 +39,18 @@ router
   .get(authenticationAndGetUser, UserController.getProfile)
   .patch(authenticationAndGetUser, userValidation.updateUser, UserController.updateProfile)
 
+router.get('/user/profile/:userId', authenticationAndGetUser, UserController.getUser)
+
 router.post('/user/update-password', authenticationAndGetUser, userValidation.updatePassword, UserController.updatePassword)
+
+router.get('/user/like-posts', authenticationAndGetUser, UserController.getLikePosts)
+
+router.get('/user/follow-list', authenticationAndGetUser, UserController.getFollowList)
+
+router
+  .route('/user/follow/:followId')
+  .post(authenticationAndGetUser, UserController.appendFollow)
+  .delete(authenticationAndGetUser, UserController.deleteFollow)
 
 /**
  * Post 貼文
