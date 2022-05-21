@@ -58,4 +58,9 @@ router
   .delete(authenticationAndGetUser, PostController.deletePost)
   .patch(authenticationAndGetUser, postValidation.updatePost, PostController.updatePost)
 
+router
+  .route('/post/:postId/like')
+  .post(authenticationAndGetUser, PostController.appendLike)
+  .delete(authenticationAndGetUser, PostController.deleteLike)
+
 module.exports = router

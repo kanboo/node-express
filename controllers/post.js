@@ -73,10 +73,53 @@ const updatePost = catchAsync(async (req, res, next) => {
   }
 })
 
+const appendLike = catchAsync(async (req, res, next) => {
+  // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
+  const userId = req.user?._id
+  const postId = req.params.postId
+
+  const post = (
+    await Post
+      .findByIdAndUpdate(postId, { $addToSet: { likes: userId } }, { new: true })
+      .populate({
+        path: 'user',
+        select: 'name photo',
+      })
+  )
+
+  if (post) {
+    successResponse(res, 200, post)
+  } else {
+    errorResponse(res, 400, 'Post Like 新增失敗')
+  }
+})
+const deleteLike = catchAsync(async (req, res, next) => {
+  // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
+  const userId = req.user?._id
+  const postId = req.params.postId
+
+  const post = (
+    await Post
+      .findByIdAndUpdate(postId, { $pull: { likes: userId } }, { new: true })
+      .populate({
+        path: 'user',
+        select: 'name photo',
+      })
+  )
+
+  if (post) {
+    successResponse(res, 200, post)
+  } else {
+    errorResponse(res, 400, 'Post Like 刪除失敗')
+  }
+})
+
 module.exports = {
   getPosts,
   createPost,
   deletePosts,
   deletePost,
   updatePost,
+  appendLike,
+  deleteLike,
 }
