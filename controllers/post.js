@@ -7,7 +7,14 @@ require('../models/user')
 
 const getPosts = catchAsync(async (req, res, next) => {
   const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt'
-  const q = req.query.keyword !== undefined ? { content: new RegExp(req.query.keyword) } : {}
+  const q = {}
+
+  if (req.query.keyword !== undefined) {
+    q.content = new RegExp(req.query.keyword)
+  }
+  if (req.query.user !== undefined) {
+    q.user = req.query.user
+  }
 
   const posts = await Post
     .find(q)
