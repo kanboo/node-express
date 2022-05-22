@@ -10,7 +10,6 @@ const generateJWT = require('../services/generateJWT.js')
 // Utils
 const catchAsync = require('../utils/catchAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
-const filteredUserInfo = require('../utils/filteredUserInfo')
 
 const apiErrorTypes = require('../constants/apiErrorTypes')
 
@@ -36,7 +35,7 @@ const register = catchAsync(async (req, res, next) => {
 
   successResponse(res, 200, {
     token,
-    user: filteredUserInfo(newUser),
+    user: newUser,
   })
 })
 
@@ -59,7 +58,7 @@ const login = catchAsync(async (req, res, next) => {
 
   successResponse(res, 200, {
     token,
-    user: filteredUserInfo(user),
+    user,
   })
 })
 

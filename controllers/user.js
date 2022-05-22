@@ -9,7 +9,6 @@ const User = require('../models/user')
 // Utils
 const catchAsync = require('../utils/catchAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
-const filteredUserInfo = require('../utils/filteredUserInfo')
 const checkValidMongoObjectId = require('../utils/checkValidMongoObjectId')
 
 /**
@@ -17,9 +16,8 @@ const checkValidMongoObjectId = require('../utils/checkValidMongoObjectId')
  */
 const getProfile = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
-  const user = filteredUserInfo(req.user)
 
-  successResponse(res, 200, user)
+  successResponse(res, 200, req.user)
 })
 
 /**
@@ -37,7 +35,7 @@ const updateProfile = catchAsync(async (req, res, next) => {
 
   const user = await User.findById(userId)
 
-  successResponse(res, 200, filteredUserInfo(user))
+  successResponse(res, 200, user)
 })
 
 /**
@@ -62,7 +60,7 @@ const getUser = catchAsync(async (req, res, next) => {
     })
 
   if (user) {
-    successResponse(res, 200, filteredUserInfo(user))
+    successResponse(res, 200, user)
   } else {
     errorResponse(res, 400, '查詢失敗！')
   }
