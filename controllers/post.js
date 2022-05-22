@@ -6,6 +6,9 @@ const checkValidMongoObjectId = require('../utils/checkValidMongoObjectId')
 
 require('../models/user')
 
+/**
+ * 依條件取得符合資格貼文清單
+ */
 const getPosts = catchAsync(async (req, res, next) => {
   const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt'
   const q = {}
@@ -31,6 +34,9 @@ const getPosts = catchAsync(async (req, res, next) => {
   }
 })
 
+/**
+ * 新增貼文
+ */
 const createPost = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
@@ -46,6 +52,9 @@ const createPost = catchAsync(async (req, res, next) => {
   }
 })
 
+/**
+ * 刪除所有貼文
+ */
 const deletePosts = catchAsync(async (req, res, next) => {
   const result = await Post.deleteMany({})
   const isSucceeded = result?.acknowledged ?? false
@@ -57,6 +66,9 @@ const deletePosts = catchAsync(async (req, res, next) => {
   }
 })
 
+/**
+ * 刪除指定貼文
+ */
 const deletePost = catchAsync(async (req, res, next) => {
   const postId = req.params.postId
   const post = await Post.findByIdAndDelete(postId)
@@ -72,6 +84,9 @@ const deletePost = catchAsync(async (req, res, next) => {
   }
 })
 
+/**
+ * 更新貼文
+ */
 const updatePost = catchAsync(async (req, res, next) => {
   const postId = req.params.postId
   const { content } = req.body
@@ -89,6 +104,9 @@ const updatePost = catchAsync(async (req, res, next) => {
   }
 })
 
+/**
+ * 新增點讚紀錄
+ */
 const appendLike = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
@@ -113,6 +131,10 @@ const appendLike = catchAsync(async (req, res, next) => {
     errorResponse(res, 400, 'Post Like 新增失敗')
   }
 })
+
+/**
+ * 刪除點讚紀錄
+ */
 const deleteLike = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id

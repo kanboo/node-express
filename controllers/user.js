@@ -40,6 +40,9 @@ const updateProfile = catchAsync(async (req, res, next) => {
   successResponse(res, 200, filteredUserInfo(user))
 })
 
+/**
+ * 取得指定 User 資訊
+ */
 const getUser = catchAsync(async (req, res, next) => {
   // 取得 User
   const userId = req.params.userId
@@ -75,6 +78,9 @@ const updatePassword = catchAsync(async (req, res, next) => {
   successResponse(res, 200, { success: true })
 })
 
+/**
+ * 取得已按讚的貼文清單
+ */
 const getLikePosts = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
@@ -95,6 +101,9 @@ const getLikePosts = catchAsync(async (req, res, next) => {
   }
 })
 
+/**
+ * 新增 Follow 人員
+ */
 const appendFollow = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
@@ -112,6 +121,10 @@ const appendFollow = catchAsync(async (req, res, next) => {
     errorResponse(res, 400, 'User follow 新增失敗')
   }
 })
+
+/**
+ * 刪除 Follow 人員
+ */
 const deleteFollow = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
@@ -130,6 +143,9 @@ const deleteFollow = catchAsync(async (req, res, next) => {
   }
 })
 
+/**
+ * 取得已 Follow 人員清單
+ */
 const getFollowList = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id

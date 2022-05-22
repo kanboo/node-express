@@ -3,6 +3,9 @@ const client = new ImgurClient({ accessToken: process.env.IMGUR_ACCESS_TOKEN })
 const catchAsync = require('../utils/catchAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
 
+/**
+ * 建立圖片
+ */
 exports.createImage = catchAsync(async (req, res, next) => {
   if (!req.file) {
     errorResponse(res, 400, 'No File Selected')
