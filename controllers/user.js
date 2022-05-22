@@ -52,6 +52,14 @@ const getUser = catchAsync(async (req, res, next) => {
   }
 
   const user = await User.findById(userId)
+    .populate({
+      path: 'following.user',
+      select: '_id',
+    })
+    .populate({
+      path: 'followers.user',
+      select: '_id',
+    })
 
   if (user) {
     successResponse(res, 200, filteredUserInfo(user))
@@ -107,19 +115,40 @@ const getLikePosts = catchAsync(async (req, res, next) => {
 const appendFollow = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
-  const followId = req.params.followId
+  const followId = req.params.id
 
   if (!checkValidMongoObjectId(followId)) {
     return errorResponse(res, 400, 'User follow 有誤')
   }
 
-  const user = await User.findByIdAndUpdate(followId, { $addToSet: { follows: userId } }, { new: true })
-
-  if (user) {
-    successResponse(res, 200, filteredUserInfo(user))
-  } else {
-    errorResponse(res, 400, 'User follow 新增失敗')
+  if (userId === followId) {
+    return errorResponse(res, 400, '無法追蹤自己')
   }
+
+  /**
+   * Using Mongoose / MongoDB $addToSet functionality on array of objects
+   * ref: https://stackoverflow.com/a/33577318
+   */
+  await User.updateOne(
+    {
+      _id: userId,
+      'following.user': { $ne: followId },
+    },
+    {
+      $push: { following: { user: followId } },
+    },
+  )
+  await User.updateOne(
+    {
+      _id: followId,
+      'followers.user': { $ne: userId },
+    },
+    {
+      $push: { followers: { user: userId } },
+    },
+  )
+
+  successResponse(res, 200, { success: true })
 })
 
 /**
@@ -128,32 +157,53 @@ const appendFollow = catchAsync(async (req, res, next) => {
 const deleteFollow = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
-  const followId = req.params.followId
+  const followId = req.params.id
 
   if (!checkValidMongoObjectId(followId)) {
     return errorResponse(res, 400, 'User follow 有誤')
   }
 
-  const user = await User.findByIdAndUpdate(followId, { $pull: { follows: userId } }, { new: true })
-
-  if (user) {
-    successResponse(res, 200, filteredUserInfo(user))
-  } else {
-    errorResponse(res, 400, 'User follow 刪除失敗')
+  if (userId === followId) {
+    return errorResponse(res, 400, '無法追蹤自己')
   }
+
+  await User.updateOne(
+    { _id: userId },
+    { $pull: { following: { user: followId } } },
+  )
+  await User.updateOne(
+    { _id: followId },
+    { $pull: { followers: { user: userId } } },
+  )
+
+  successResponse(res, 200, { success: true })
 })
 
 /**
  * 取得已 Follow 人員清單
  */
-const getFollowList = catchAsync(async (req, res, next) => {
+const getFollowingList = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
 
-  const users = await User.find({ follows: { $in: [userId] } })
+  const user = await User.findById(userId)
+    .populate({
+      path: 'following.user',
+      select: '_id name photo',
+    })
 
-  if (users) {
-    successResponse(res, 200, users)
+  const normalizedFollowing = user.following.map((follower) => {
+    const { _id, name, photo } = follower.user
+    return {
+      _id,
+      name,
+      photo,
+      createdAt: follower.createdAt,
+    }
+  })
+
+  if (user) {
+    successResponse(res, 200, normalizedFollowing)
   } else {
     errorResponse(res, 400, '查詢失敗！')
   }
@@ -167,5 +217,5 @@ module.exports = {
   getLikePosts,
   appendFollow,
   deleteFollow,
-  getFollowList,
+  getFollowingList,
 }

@@ -45,10 +45,10 @@ router.post('/user/update-password', authenticationAndGetUser, userValidation.up
 
 router.get('/user/like-posts', authenticationAndGetUser, UserController.getLikePosts)
 
-router.get('/user/follow-list', authenticationAndGetUser, UserController.getFollowList)
+router.get('/user/following-list', authenticationAndGetUser, UserController.getFollowingList)
 
 router
-  .route('/user/follow/:followId')
+  .route('/user/:id/follow')
   .post(authenticationAndGetUser, UserController.appendFollow)
   .delete(authenticationAndGetUser, UserController.deleteFollow)
 

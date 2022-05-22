@@ -5,7 +5,8 @@ const filteredUserInfo = (user) => {
     name: user?.name,
     photo: user?.photo,
     gender: user?.gender,
-    follows: user?.follows,
+    following: user?.following,
+    followers: user?.followers,
   }
 }
 
