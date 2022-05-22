@@ -45,7 +45,7 @@ const register = catchAsync(async (req, res, next) => {
 const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body
 
-  const user = await User.findOne({ email }).select('+password')
+  let user = await User.findOne({ email }).select('+password')
   if (!user) { return errorResponse(res, 400, '帳號密碼有誤！') }
 
   const isValidated = await bcrypt.compare(password, user.password)
@@ -55,6 +55,11 @@ const login = catchAsync(async (req, res, next) => {
     id: user._id,
     name: user.name,
   })
+
+  // TODO: 用 delete 無法清除 object key，暫時先重抓一次 User
+  // 清除密碼紀錄
+  // delete user.password
+  user = await User.findById(user._id)
 
   successResponse(res, 200, {
     token,
