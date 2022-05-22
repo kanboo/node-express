@@ -10,6 +10,7 @@ const User = require('../models/user')
 const catchAsync = require('../utils/catchAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
 const filteredUserInfo = require('../utils/filteredUserInfo')
+const checkValidMongoObjectId = require('../utils/checkValidMongoObjectId')
 
 /**
  * 取得 User 資訊
@@ -42,6 +43,11 @@ const updateProfile = catchAsync(async (req, res, next) => {
 const getUser = catchAsync(async (req, res, next) => {
   // 取得 User
   const userId = req.params.userId
+
+  if (!checkValidMongoObjectId(userId)) {
+    return errorResponse(res, 400, '取得 User 有誤')
+  }
+
   const user = await User.findById(userId)
 
   if (user) {
@@ -94,6 +100,10 @@ const appendFollow = catchAsync(async (req, res, next) => {
   const userId = req.user?._id
   const followId = req.params.followId
 
+  if (!checkValidMongoObjectId(followId)) {
+    return errorResponse(res, 400, 'User follow 有誤')
+  }
+
   const user = await User.findByIdAndUpdate(followId, { $addToSet: { follows: userId } }, { new: true })
 
   if (user) {
@@ -106,6 +116,10 @@ const deleteFollow = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
   const followId = req.params.followId
+
+  if (!checkValidMongoObjectId(followId)) {
+    return errorResponse(res, 400, 'User follow 有誤')
+  }
 
   const user = await User.findByIdAndUpdate(followId, { $pull: { follows: userId } }, { new: true })
 

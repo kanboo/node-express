@@ -2,6 +2,7 @@ const Post = require('../models/post')
 
 const catchAsync = require('../utils/catchAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
+const checkValidMongoObjectId = require('../utils/checkValidMongoObjectId')
 
 require('../models/user')
 
@@ -60,6 +61,10 @@ const deletePost = catchAsync(async (req, res, next) => {
   const postId = req.params.postId
   const post = await Post.findByIdAndDelete(postId)
 
+  if (!checkValidMongoObjectId(postId)) {
+    return errorResponse(res, 400, 'Post 刪除有誤')
+  }
+
   if (post) {
     successResponse(res, 200, { success: true })
   } else {
@@ -70,6 +75,10 @@ const deletePost = catchAsync(async (req, res, next) => {
 const updatePost = catchAsync(async (req, res, next) => {
   const postId = req.params.postId
   const { content } = req.body
+
+  if (!checkValidMongoObjectId(postId)) {
+    return errorResponse(res, 400, 'Post 更新有誤')
+  }
 
   const post = await Post.findByIdAndUpdate(postId, { content })
 
@@ -84,6 +93,10 @@ const appendLike = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
   const postId = req.params.postId
+
+  if (!checkValidMongoObjectId(postId)) {
+    return errorResponse(res, 400, 'Post Like 有誤')
+  }
 
   const post = (
     await Post
@@ -104,6 +117,10 @@ const deleteLike = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
   const userId = req.user?._id
   const postId = req.params.postId
+
+  if (!checkValidMongoObjectId(postId)) {
+    return errorResponse(res, 400, 'Post Like 有誤')
+  }
 
   const post = (
     await Post
