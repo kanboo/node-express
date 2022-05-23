@@ -56,10 +56,12 @@ const login = catchAsync(async (req, res, next) => {
     name: user.name,
   })
 
-  // TODO: 用 delete 無法清除 object key，暫時先重抓一次 User
-  // 清除密碼紀錄
-  // delete user.password
-  user = await User.findById(user._id)
+  /**
+   * 清除密碼紀錄
+   * Note: 需要先把 Mongoose 資料轉為 object 才能使用 object 相關操作。
+   */
+  user = user.toObject()
+  delete user.password
 
   successResponse(res, 200, {
     token,
