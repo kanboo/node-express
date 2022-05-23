@@ -25,7 +25,7 @@ const getProfile = catchAsync(async (req, res, next) => {
  */
 const updateProfile = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
-  const userId = req.user?._id
+  const userId = req.user.id
 
   const { name, photo, gender } = req.body
 
@@ -56,7 +56,7 @@ const getUser = catchAsync(async (req, res, next) => {
     })
     .populate({
       path: 'followers.user',
-      select: '_id',
+      select: '_id name',
     })
 
   if (user) {
@@ -71,7 +71,7 @@ const getUser = catchAsync(async (req, res, next) => {
  */
 const updatePassword = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
-  const userId = req.user?._id
+  const userId = req.user.id
 
   const { newPassword } = req.body
 
@@ -89,7 +89,7 @@ const updatePassword = catchAsync(async (req, res, next) => {
  */
 const getLikePosts = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
-  const userId = req.user?._id
+  const userId = req.user.id
 
   const posts = (
     await Post
@@ -112,7 +112,7 @@ const getLikePosts = catchAsync(async (req, res, next) => {
  */
 const appendFollow = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
-  const userId = req.user?._id
+  const userId = req.user.id
   const followId = req.params.id
 
   if (!checkValidMongoObjectId(followId)) {
@@ -154,7 +154,7 @@ const appendFollow = catchAsync(async (req, res, next) => {
  */
 const deleteFollow = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
-  const userId = req.user?._id
+  const userId = req.user.id
   const followId = req.params.id
 
   if (!checkValidMongoObjectId(followId)) {
@@ -182,7 +182,7 @@ const deleteFollow = catchAsync(async (req, res, next) => {
  */
 const getFollowingList = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
-  const userId = req.user?._id
+  const userId = req.user.id
 
   const user = await User.findById(userId)
     .populate({

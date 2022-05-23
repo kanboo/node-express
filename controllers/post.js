@@ -39,7 +39,7 @@ const getPosts = catchAsync(async (req, res, next) => {
  */
 const createPost = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
-  const userId = req.user?._id
+  const userId = req.user.id
 
   const { content, image } = req.body
 
@@ -109,7 +109,7 @@ const updatePost = catchAsync(async (req, res, next) => {
  */
 const appendLike = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
-  const userId = req.user?._id
+  const userId = req.user.id
   const postId = req.params.postId
 
   if (!checkValidMongoObjectId(postId)) {
@@ -137,7 +137,7 @@ const appendLike = catchAsync(async (req, res, next) => {
  */
 const deleteLike = catchAsync(async (req, res, next) => {
   // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
-  const userId = req.user?._id
+  const userId = req.user.id
   const postId = req.params.postId
 
   if (!checkValidMongoObjectId(postId)) {
