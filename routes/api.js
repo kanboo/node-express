@@ -3,50 +3,21 @@ const router = express.Router()
 
 const authenticationAndGetUser = require('../middleware/authenticationAndGetUser')
 
-const { errorResponse } = require('../utils/responseHandle')
-
 const authValidation = require('../validations/auth')
 const userValidation = require('../validations/user')
 const postValidation = require('../validations/post')
+const imageValidation = require('../validations/image')
 
 /**
  * Image 圖片管理
  */
 const ImageController = require('../controllers/image')
 
-const multer = require('multer')
-const upload = multer({
-  limits: {
-     // 限制上傳檔案的大小為 1MB
-    fileSize: 1 * 1024 * 1024,
-  },
-  fileFilter (req, file, cb) {
-     // 只接受三種圖片格式
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      cb(new Error('Please upload an image'))
-    }
-
-     // Success
-    cb(null, true)
-  },
-})
-
 router.post(
   '/image',
   authenticationAndGetUser,
-  upload.single('image'),
-  (error, req, res, next) => {
-    if (error instanceof multer.MulterError) {
-      // A Multer error occurred when uploading.
-      // ref：https://github.com/expressjs/multer/blob/4f4326a6687635411a69d70f954f48abb4bce58a/lib/multer-error.js#L3-L12
-
-      return errorResponse(res, 400, error.message, error.code)
-    } else if (error) {
-      // An unknown error occurred when uploading.
-      console.error(error)
-      return errorResponse(res, 400, '圖片上傳失敗')
-    }
-  },
+  imageValidation.upload.single('image'),
+  imageValidation.checkImageValidate,
   ImageController.createImage,
 )
 
@@ -68,7 +39,18 @@ router
   .get(authenticationAndGetUser, UserController.getProfile)
   .patch(authenticationAndGetUser, userValidation.updateUser, UserController.updateProfile)
 
+router.get('/user/profile/:userId', authenticationAndGetUser, UserController.getUser)
+
 router.post('/user/update-password', authenticationAndGetUser, userValidation.updatePassword, UserController.updatePassword)
+
+router.get('/user/like-posts', authenticationAndGetUser, UserController.getLikePosts)
+
+router.get('/user/following-list', authenticationAndGetUser, UserController.getFollowingList)
+
+router
+  .route('/user/:id/follow')
+  .post(authenticationAndGetUser, UserController.appendFollow)
+  .delete(authenticationAndGetUser, UserController.deleteFollow)
 
 /**
  * Post 貼文
@@ -86,5 +68,10 @@ router
   .route('/post/:postId')
   .delete(authenticationAndGetUser, PostController.deletePost)
   .patch(authenticationAndGetUser, postValidation.updatePost, PostController.updatePost)
+
+router
+  .route('/post/:postId/like')
+  .post(authenticationAndGetUser, PostController.appendLike)
+  .delete(authenticationAndGetUser, PostController.deleteLike)
 
 module.exports = router

@@ -10,7 +10,6 @@ const generateJWT = require('../services/generateJWT.js')
 // Utils
 const catchAsync = require('../utils/catchAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
-const filteredUserInfo = require('../utils/filteredUserInfo')
 
 const apiErrorTypes = require('../constants/apiErrorTypes')
 
@@ -36,7 +35,7 @@ const register = catchAsync(async (req, res, next) => {
 
   successResponse(res, 200, {
     token,
-    user: filteredUserInfo(newUser),
+    user: newUser,
   })
 })
 
@@ -46,7 +45,7 @@ const register = catchAsync(async (req, res, next) => {
 const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body
 
-  const user = await User.findOne({ email }).select('+password')
+  let user = await User.findOne({ email }).select('+password')
   if (!user) { return errorResponse(res, 400, '帳號密碼有誤！') }
 
   const isValidated = await bcrypt.compare(password, user.password)
@@ -57,9 +56,16 @@ const login = catchAsync(async (req, res, next) => {
     name: user.name,
   })
 
+  /**
+   * 清除密碼紀錄
+   * Note: 需要先把 Mongoose 資料轉為 object 才能使用 object 相關操作。
+   */
+  user = user.toObject()
+  delete user.password
+
   successResponse(res, 200, {
     token,
-    user: filteredUserInfo(user),
+    user,
   })
 })
 
