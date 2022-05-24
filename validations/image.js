@@ -3,8 +3,8 @@ const { errorResponse } = require('../utils/responseHandle')
 
 const upload = multer({
   limits: {
-     // 限制上傳檔案的大小為 1MB
-    fileSize: 1 * 1024 * 1024,
+     // 限制上傳檔案的大小為 2MB
+    fileSize: 2 * 1024 * 1024,
   },
   fileFilter (req, file, cb) {
      // 只接受三種圖片格式
