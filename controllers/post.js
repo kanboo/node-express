@@ -1,4 +1,5 @@
 const Post = require('../models/post')
+const Comment = require('../models/comment')
 
 const catchAsync = require('../utils/catchAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
@@ -25,7 +26,12 @@ const getPosts = catchAsync(async (req, res, next) => {
     .populate({
       path: 'user',
       select: 'name photo',
-    }).sort(timeSort)
+    })
+    .populate({
+      path: 'comments',
+      select: 'comment user createdAt',
+    })
+    .sort(timeSort)
 
   if (posts) {
     successResponse(res, 200, posts)
@@ -160,6 +166,32 @@ const deleteLike = catchAsync(async (req, res, next) => {
   }
 })
 
+/**
+ * 新增點讚紀錄
+ */
+const createComment = catchAsync(async (req, res, next) => {
+  // 已從 Middleware 之 authenticationAndGetUser 取得 User 資訊
+  const userId = req.user.id
+  const postId = req.params.postId
+  const { comment } = req.body
+
+  if (!checkValidMongoObjectId(postId)) {
+    return errorResponse(res, 400, 'Post Comment 有誤')
+  }
+
+  const newComment = await Comment.create({
+    post: postId,
+    user: userId,
+    comment,
+  })
+
+  if (newComment) {
+    successResponse(res, 200, { comment: newComment })
+  } else {
+    errorResponse(res, 400, 'Post Comment 新增失敗')
+  }
+})
+
 module.exports = {
   getPosts,
   createPost,
@@ -168,4 +200,5 @@ module.exports = {
   updatePost,
   appendLike,
   deleteLike,
+  createComment,
 }

@@ -74,4 +74,8 @@ router
   .post(authenticationAndGetUser, PostController.appendLike)
   .delete(authenticationAndGetUser, PostController.deleteLike)
 
+router
+  .route('/post/:postId/comment')
+  .post(authenticationAndGetUser, postValidation.createComment, PostController.createComment)
+
 module.exports = router
