@@ -41,6 +41,30 @@ const getPosts = catchAsync(async (req, res, next) => {
 })
 
 /**
+ * 取得單一貼文
+ */
+const getPost = catchAsync(async (req, res, next) => {
+  const postId = req.params.postId
+
+  const posts = await Post
+    .findById(postId)
+    .populate({
+      path: 'user',
+      select: 'name photo',
+    })
+    .populate({
+      path: 'comments',
+      select: 'comment user createdAt',
+    })
+
+  if (posts) {
+    successResponse(res, 200, posts)
+  } else {
+    errorResponse(res, 400, 'Posts 取得失敗')
+  }
+})
+
+/**
  * 新增貼文
  */
 const createPost = catchAsync(async (req, res, next) => {
@@ -186,7 +210,7 @@ const createComment = catchAsync(async (req, res, next) => {
   })
 
   if (newComment) {
-    successResponse(res, 200, { comment: newComment })
+    successResponse(res, 200, newComment)
   } else {
     errorResponse(res, 400, 'Post Comment 新增失敗')
   }
@@ -194,6 +218,7 @@ const createComment = catchAsync(async (req, res, next) => {
 
 module.exports = {
   getPosts,
+  getPost,
   createPost,
   deletePosts,
   deletePost,

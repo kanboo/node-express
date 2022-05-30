@@ -66,6 +66,7 @@ router.post('/post', authenticationAndGetUser, postValidation.createPost, PostCo
 
 router
   .route('/post/:postId')
+  .get(authenticationAndGetUser, PostController.getPost)
   .delete(authenticationAndGetUser, PostController.deletePost)
   .patch(authenticationAndGetUser, postValidation.updatePost, PostController.updatePost)
 
