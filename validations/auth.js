@@ -15,8 +15,8 @@ const register = validate([
     .withMessage('Email invalid'),
   body('password')
     .trim()
-    .isLength({ min: 4 })
-    .withMessage('Password invalid'),
+    .matches(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]{8,}$/)
+    .withMessage('密碼需至少 8 碼以上，並中英混合，不可以輸入空白字元、特殊符號'),
   body('confirmPassword')
     .trim()
     .custom((value, { req }) => {
