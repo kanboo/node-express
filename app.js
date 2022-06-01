@@ -62,13 +62,6 @@ const cors = require('cors')
 app.use(cors())
 
 /**
- * 第三方登入設定
- */
-const passport = require('passport')
-app.use(passport.initialize())
-app.use(passport.session())
-
-/**
  * 程式出現重大錯誤時，紀錄 Log
  */
 process.on('uncaughtException', (err) => {

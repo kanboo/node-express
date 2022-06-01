@@ -1,10 +1,16 @@
 /**
  * Ref：
+ * https://israynotarray.com/nodejs/20220525/790433249/
  * https://fufong79570.medium.com/%E4%B8%B2%E6%8E%A5google-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%99%BB%E5%85%A5-%E5%AF%A6%E4%BD%9C-node-js-b750821cde90
  * https://github.com/passport/todos-express-google-oauth2
  */
+
+const bcrypt = require('bcrypt')
 const passport = require('passport')
-const GoogleStrategy = require('passport-google-oauth20')
+const GoogleStrategy = require('passport-google-oauth20').Strategy
+
+// Models
+const User = require('../models/user')
 
 passport.use(
   new GoogleStrategy(
@@ -13,23 +19,24 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_LOGIN_CALL_BACK_URL,
     },
-    (accessToken, refreshToken, profile, cb) => {
-      console.log('Google Profile', profile)
-      return cb(null, profile)
+    async (accessToken, refreshToken, profile, cb) => {
+      const userEmail = profile.emails?.[0]?.value ?? null
+
+      const user = await User.findOne({ email: userEmail })
+      if (user) { return cb(null, user) }
+
+      // 新增使用者
+      const password = await bcrypt.hash(process.env.BCRYPT_RANDOM_PASSWORD, 12)
+      const newUser = await User.create({
+        name: profile.displayName,
+        email: userEmail,
+        password,
+        photo: profile.photos?.[0]?.value ?? '',
+        googleId: profile.id,
+      })
+      return cb(null, newUser)
     },
   ),
 )
-
-// 可設定要將哪些 user 資訊，儲存在 Session 中的 passport.user
-passport.serializeUser(function (user, cb) {
-  // console.log('serializeUser', user)
-  cb(null, user)
-})
-
-// 可藉由從 Session 中獲得的資訊去撈該 user 的資料
-passport.deserializeUser(function (obj, cb) {
-  // console.log('deserializeUser', obj)
-  cb(null, obj)
-})
 
 module.exports = passport

@@ -13,11 +13,8 @@ const AuthController = require('../controllers/auth')
 router.post('/google', AuthController.getGoogleAuthByFrontend)
 
 // 籍由 後端 取得 Google 登入資訊
-router.get('/google/backend', passport.authenticate('google', { scope: ['profile'] }))
-router.get('/google/callback', passport.authenticate('google', {
-  successRedirect: '/login-google-success',
-  failureRedirect: '/login-google-fail',
-}))
+router.get('/google/login', passport.authenticate('google', { scope: ['email', 'profile'] }))
+router.get('/google/callback', passport.authenticate('google', { session: false }), AuthController.passportLogin)
 
 // 籍由 後端 取得 Facebook 登入資訊
 router.get('/facebook', passport.authenticate('facebook'))

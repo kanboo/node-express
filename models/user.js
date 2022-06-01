@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ['male', 'female'],
     },
+    googleId: {
+      type: String,
+      select: false,
+    },
     following: [{
       user: {
         type: mongoose.Schema.ObjectId,

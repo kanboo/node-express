@@ -70,6 +70,19 @@ const login = catchAsync(async (req, res, next) => {
 })
 
 /**
+ * 第三方登入
+ */
+const passportLogin = catchAsync(async (req, res, next) => {
+  const token = generateJWT({
+    id: req.user._id,
+    name: req.user.name,
+  })
+
+  // 重新導向到前端
+  res.redirect(`${process.env.FORENTEND_HOST}/auth/callback?token=${token}&name=${req.user.name}`)
+})
+
+/**
  * 前端打 API 取得 Google 登入資訊
  */
 const getGoogleAuthByFrontend = catchAsync(async (req, res, next) => {
@@ -96,5 +109,6 @@ const getGoogleAuthByFrontend = catchAsync(async (req, res, next) => {
 module.exports = {
   register,
   login,
+  passportLogin,
   getGoogleAuthByFrontend,
 }
