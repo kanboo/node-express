@@ -5,24 +5,14 @@ const bcrypt = require('bcrypt')
 const User = require('../models/user')
 
 // Services
-const generateJWT = require('../services/generateJWT.js')
+const generateJWT = require('../services/generateJWT')
+const { registerSuccessMail } = require('../services/mailTransporter')
 
 // Utils
 const catchAsync = require('../utils/catchAsync')
 const { successResponse, errorResponse } = require('../utils/responseHandle')
 
 const apiErrorTypes = require('../constants/apiErrorTypes')
-
-// Mail
-const nodemailer = require('nodemailer')
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  auth: {
-    user: process.env.MAILER_ACCOUNT,
-    pass: process.env.MAILER_PASSWORD,
-  },
-})
 
 /**
  * 註冊
@@ -44,27 +34,13 @@ const register = catchAsync(async (req, res, next) => {
     name: newUser.name,
   })
 
+  // 註冊成功通知信
+  registerSuccessMail(email)
+
   successResponse(res, 200, {
     token,
     user: newUser,
   })
-
-  // 發信通知
-  transporter.sendMail({
-    from: process.env.MAILER_ACCOUNT,
-    to: email,
-    subject: 'Meta-Wall Register Success',
-    html: `
-    Congratulations on your successful registration.
-    <br>
-    <br>
-    Website: <a href="https://meta-wall.kanboo.cc/">Meta-Wall</a>
-    `,
-  })
-    .then((info) => {
-      console.log('發信通知', { info })
-    })
-    .catch(console.error)
 })
 
 /**

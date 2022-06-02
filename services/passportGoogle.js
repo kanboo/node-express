@@ -9,6 +9,8 @@ const bcrypt = require('bcrypt')
 const passport = require('passport')
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 
+const { registerSuccessMail } = require('./mailTransporter')
+
 // Models
 const User = require('../models/user')
 
@@ -20,21 +22,30 @@ passport.use(
       callbackURL: process.env.GOOGLE_LOGIN_CALL_BACK_URL,
     },
     async (accessToken, refreshToken, profile, cb) => {
-      const userEmail = profile.emails?.[0]?.value ?? null
+      try {
+        const userEmail = profile.emails?.[0]?.value ?? null
 
-      const user = await User.findOne({ email: userEmail })
-      if (user) { return cb(null, user) }
+        const user = await User.findOne({ email: userEmail })
+        if (user) { return cb(null, user) }
 
-      // 新增使用者
-      const password = await bcrypt.hash(process.env.BCRYPT_RANDOM_PASSWORD, 12)
-      const newUser = await User.create({
-        name: profile.displayName,
-        email: userEmail,
-        password,
-        photo: profile.photos?.[0]?.value ?? '',
-        googleId: profile.id,
-      })
-      return cb(null, newUser)
+        // 新增使用者
+        const password = await bcrypt.hash(process.env.BCRYPT_RANDOM_PASSWORD, 12)
+        const newUser = await User.create({
+          name: profile.displayName,
+          email: userEmail,
+          password,
+          photo: profile.photos?.[0]?.value ?? '',
+          googleId: profile.id,
+        })
+
+        // 註冊成功通知信
+        registerSuccessMail(userEmail)
+
+        return cb(null, newUser)
+      } catch (error) {
+        console.log(error)
+        return cb(error, null)
+      }
     },
   ),
 )
