@@ -8,6 +8,7 @@
     "lint": "eslint '**/*.{js,jsx}' --fix"
   },
   "dependencies": {
+    "@google-cloud/storage": "^6.0.1",
     "bcrypt": "^5.0.1",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "~1.4.4",
