@@ -14,11 +14,8 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-// Middleware
-const isAuthForServerSide = require('../middleware/isAuthForServerSide')
-
 /* GET home page. */
-router.get('/', isAuthForServerSide, function (req, res, next) {
+router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' })
 })
 
