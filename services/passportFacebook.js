@@ -3,46 +3,58 @@
  * https://ithelp.ithome.com.tw/articles/10197391
  * https://github.com/jaredhanson/passport-facebook
  */
-
+const bcrypt = require('bcrypt')
 const passport = require('passport')
-const Strategy = require('passport-facebook')
+const Strategy = require('passport-facebook').Strategy
 
-// Configure the Facebook strategy for use by Passport.
-//
-// OAuth 2.0-based strategies require a `verify` function which receives the
-// credential (`accessToken`) for accessing the Facebook API on the user's
-// behalf, along with the user's profile.  The function must invoke `cb`
-// with a user object, which will be set at `req.user` in route handlers after
-// authentication.
+const { registerSuccessMail } = require('./mailTransporter')
+
+// Models
+const User = require('../models/user')
+
 passport.use(
   new Strategy(
     {
       clientID: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
       callbackURL: process.env.FACEBOOK_LOGIN_CALL_BACK_URL,
+      profileFields: ['id', 'displayName', 'photos', 'email', 'gender'],
     },
-    function (accessToken, refreshToken, profile, cb) {
-      // In this example, the user's Facebook profile is supplied as the user
-      // record.  In a production-quality application, the Facebook profile should
-      // be associated with a user record in the application's database, which
-      // allows for account linking and authentication with other identity
-      // providers.
-      console.log('FB Profile', profile)
-      return cb(null, profile)
+    async (accessToken, refreshToken, profile, cb) => {
+      try {
+        const userEmail = profile.emails?.[0]?.value ?? null
+        const facebookId = profile.id ?? null
+
+        let user = await User.findOne({ email: userEmail })
+
+        if (user) {
+          if (!user.facebookId) {
+            user = await User.findByIdAndUpdate(user.id, { facebookId })
+          }
+
+          return cb(null, user)
+        }
+
+        // 新增使用者
+        const password = await bcrypt.hash(process.env.BCRYPT_RANDOM_PASSWORD, 12)
+        const newUser = await User.create({
+          name: profile.displayName,
+          email: userEmail,
+          password,
+          photo: profile.photos?.[0]?.value ?? '',
+          facebookId,
+        })
+
+        // 註冊成功通知信
+        registerSuccessMail(userEmail)
+
+        return cb(null, newUser)
+      } catch (error) {
+        console.log(error)
+        return cb(error, null)
+      }
     },
   ),
 )
-
-// 可設定要將哪些 user 資訊，儲存在 Session 中的 passport.user
-passport.serializeUser(function (user, cb) {
-  // console.log('serializeUser', user)
-  cb(null, user)
-})
-
-// 可藉由從 Session 中獲得的資訊去撈該 user 的資料
-passport.deserializeUser(function (obj, cb) {
-  // console.log('deserializeUser', obj)
-  cb(null, obj)
-})
 
 module.exports = passport

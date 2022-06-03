@@ -24,9 +24,17 @@ passport.use(
     async (accessToken, refreshToken, profile, cb) => {
       try {
         const userEmail = profile.emails?.[0]?.value ?? null
+        const googleId = profile.id ?? null
 
-        const user = await User.findOne({ email: userEmail })
-        if (user) { return cb(null, user) }
+        let user = await User.findOne({ email: userEmail })
+
+        if (user) {
+          if (!user.googleId) {
+            user = await User.findByIdAndUpdate(user.id, { googleId })
+          }
+
+          return cb(null, user)
+        }
 
         // 新增使用者
         const password = await bcrypt.hash(process.env.BCRYPT_RANDOM_PASSWORD, 12)
@@ -35,7 +43,7 @@ passport.use(
           email: userEmail,
           password,
           photo: profile.photos?.[0]?.value ?? '',
-          googleId: profile.id,
+          googleId,
         })
 
         // 註冊成功通知信
