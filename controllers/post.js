@@ -21,23 +21,28 @@ const getPosts = catchAsync(async (req, res, next) => {
     q.user = req.query.user
   }
 
-  const posts = await Post
-    .find(q)
-    .populate({
-      path: 'user',
-      select: 'name photo',
-    })
-    .populate({
-      path: 'comments',
-      select: 'comment user createdAt',
-    })
-    .sort(timeSort)
+  const { page = 1, perPage = 10 } = req.query
+  const hasQueryAll = !!req.query.all
 
-  if (posts) {
-    successResponse(res, 200, posts)
-  } else {
-    errorResponse(res, 400, 'Posts 取得失敗')
+  const options = {
+    pagination: !hasQueryAll,
+    page,
+    limit: perPage,
+    populate: [
+      {
+        path: 'user',
+        select: 'name photo',
+      },
+      {
+        path: 'comments',
+        select: 'comment user createdAt',
+      },
+    ],
+    sort: timeSort,
   }
+
+  const response = await Post.paginate(q, options)
+  successResponse(res, 200, response)
 })
 
 /**

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const postSchema = new mongoose.Schema(
   {
@@ -28,6 +29,24 @@ const postSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 )
+
+const myCustomLabels = {
+  totalDocs: 'totalCount',
+  docs: 'data',
+  limit: 'perPage',
+  page: 'currentPage',
+  nextPage: 'next',
+  prevPage: 'prev',
+  totalPages: 'pageCount',
+  pagingCounter: 'slNo',
+  meta: 'paginator',
+}
+
+mongoosePaginate.paginate.options = {
+  customLabels: myCustomLabels,
+}
+
+postSchema.plugin(mongoosePaginate)
 
 postSchema.virtual('comments', {
   ref: 'Comment',
