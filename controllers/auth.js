@@ -1,5 +1,6 @@
 // Third Party Kit
 const bcrypt = require('bcrypt')
+const httpStatus = require('http-status')
 
 // Models
 const User = require('../models/user')
@@ -9,8 +10,9 @@ const generateJWT = require('../services/generateJWT')
 const { registerSuccessMail } = require('../services/mailTransporter')
 
 // Utils
+const ApiError = require('../utils/ApiError')
 const catchAsync = require('../utils/catchAsync')
-const { successResponse, errorResponse } = require('../utils/responseHandle')
+const { successResponse } = require('../utils/responseHandle')
 
 const apiErrorTypes = require('../constants/apiErrorTypes')
 
@@ -21,7 +23,11 @@ const register = catchAsync(async (req, res, next) => {
   const { name, email, password } = req.body
 
   const user = await User.findOne({ email })
-  if (user) { return errorResponse(res, 400, '此 Mail 已註冊！', apiErrorTypes.EMAIL_EXISTS) }
+  if (user) {
+    const apiError = new ApiError(httpStatus.BAD_REQUEST, '此帳號已註冊')
+    apiError.setErrorType(apiErrorTypes.USER_ALREADY_EXISTS)
+    return next(apiError)
+  }
 
   // 加密密碼
   const hashPassword = await bcrypt.hash(password, 12)
@@ -50,10 +56,10 @@ const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body
 
   let user = await User.findOne({ email }).select('+password')
-  if (!user) { return errorResponse(res, 400, '帳號密碼有誤！') }
+  if (!user) { return next(new ApiError(httpStatus.BAD_REQUEST, '帳號密碼有誤！')) }
 
   const isValidated = await bcrypt.compare(password, user.password)
-  if (!isValidated) { return errorResponse(res, 400, '帳號密碼有誤！') }
+  if (!isValidated) { return next(new ApiError(httpStatus.BAD_REQUEST, '帳號密碼有誤！')) }
 
   const token = generateJWT({
     id: user._id,

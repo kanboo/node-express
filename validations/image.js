@@ -1,5 +1,7 @@
 const multer = require('multer')
-const { errorResponse } = require('../utils/responseHandle')
+const httpStatus = require('http-status')
+
+const ApiError = require('../utils/ApiError')
 
 const upload = multer({
   limits: {
@@ -22,11 +24,11 @@ const checkImageValidate = (error, req, res, next) => {
     // A Multer error occurred when uploading.
     // ref：https://github.com/expressjs/multer/blob/4f4326a6687635411a69d70f954f48abb4bce58a/lib/multer-error.js#L3-L12
 
-    return errorResponse(res, 400, error.message, error.code)
+    return next(new ApiError(httpStatus.BAD_REQUEST, error.message))
   } else if (error) {
     // An unknown error occurred when uploading.
     console.error(error)
-    return errorResponse(res, 400, '圖片上傳失敗')
+    return next(new ApiError(httpStatus.BAD_REQUEST, '圖片上傳失敗'))
   }
 }
 

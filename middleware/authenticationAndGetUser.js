@@ -1,11 +1,12 @@
 const jwt = require('jsonwebtoken')
+const httpStatus = require('http-status')
 
 // Models
 const User = require('../models/user')
 
 // Utils
+const ApiError = require('../utils/ApiError')
 const catchAsync = require('../utils/catchAsync')
-const { errorResponse } = require('../utils/responseHandle')
 
 module.exports = catchAsync(async (req, res, next) => {
   // 取得 Token
@@ -13,7 +14,7 @@ module.exports = catchAsync(async (req, res, next) => {
   const token = authorization?.split(' ')?.[1] ?? ''
 
   if (!(authorization.startsWith('Bearer') && token)) {
-    return errorResponse(res, 401, 'Unauthorized')
+    return next(new ApiError(httpStatus.UNAUTHORIZED, 'Unauthorized'))
   }
 
   // 驗證 Token 正確性
@@ -25,22 +26,22 @@ module.exports = catchAsync(async (req, res, next) => {
 
         // 無效的 Token
         if (err.name === 'JsonWebTokenError') {
-          return errorResponse(res, 401, 'Unauthorized')
+          return next(new ApiError(httpStatus.UNAUTHORIZED, 'Unauthorized'))
         }
 
         // 使用期限過期
         if (err.name === 'TokenExpiredError') {
-          return errorResponse(res, 401, '權限過期，請重新登入！')
+          return next(new ApiError(httpStatus.UNAUTHORIZED, '權限過期，請重新登入！'))
         }
 
         // JWT 未生效
         if (err.name === 'NotBeforeError') {
-          return errorResponse(res, 401, '權限未生效，請洽管理員！')
+          return next(new ApiError(httpStatus.UNAUTHORIZED, '權限未生效，請洽管理員！'))
         }
 
         console.error('JWT Error', token)
         console.error(err.message)
-        return errorResponse(res, 401, 'Unauthorized')
+        return next(new ApiError(httpStatus.UNAUTHORIZED, 'Unauthorized'))
       } else {
         resolve(payload)
       }
@@ -52,7 +53,7 @@ module.exports = catchAsync(async (req, res, next) => {
   const user = await User.findById(userId)
 
   if (!user) {
-    return errorResponse(res, 401, '登入失敗！')
+    return next(new ApiError(httpStatus.UNAUTHORIZED, '登入失敗！'))
   }
 
   req.user = user

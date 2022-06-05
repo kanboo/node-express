@@ -1,8 +1,11 @@
+const httpStatus = require('http-status')
+
 const Post = require('../models/post')
 const Comment = require('../models/comment')
 
+const ApiError = require('../utils/ApiError')
 const catchAsync = require('../utils/catchAsync')
-const { successResponse, errorResponse } = require('../utils/responseHandle')
+const { successResponse } = require('../utils/responseHandle')
 const checkValidMongoObjectId = require('../utils/checkValidMongoObjectId')
 
 require('../models/user')
@@ -65,7 +68,7 @@ const getPost = catchAsync(async (req, res, next) => {
   if (posts) {
     successResponse(res, 200, posts)
   } else {
-    errorResponse(res, 400, 'Posts 取得失敗')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Posts 取得失敗'))
   }
 })
 
@@ -83,7 +86,7 @@ const createPost = catchAsync(async (req, res, next) => {
   if (newPost) {
     successResponse(res, 200, { id: newPost._id })
   } else {
-    errorResponse(res, 400, 'Post 建立失敗')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Post 建立失敗'))
   }
 })
 
@@ -97,7 +100,7 @@ const deletePosts = catchAsync(async (req, res, next) => {
   if (isSucceeded) {
     successResponse(res, 200, { success: true })
   } else {
-    errorResponse(res, 400, 'Posts 刪除失敗')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Posts 刪除失敗'))
   }
 })
 
@@ -109,13 +112,13 @@ const deletePost = catchAsync(async (req, res, next) => {
   const post = await Post.findByIdAndDelete(postId)
 
   if (!checkValidMongoObjectId(postId)) {
-    return errorResponse(res, 400, 'Post 刪除有誤')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Posts 刪除有誤'))
   }
 
   if (post) {
     successResponse(res, 200, { success: true })
   } else {
-    errorResponse(res, 400, 'Post 刪除失敗')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Post 刪除失敗'))
   }
 })
 
@@ -127,7 +130,7 @@ const updatePost = catchAsync(async (req, res, next) => {
   const { content } = req.body
 
   if (!checkValidMongoObjectId(postId)) {
-    return errorResponse(res, 400, 'Post 更新有誤')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Post 更新有誤'))
   }
 
   const post = await Post.findByIdAndUpdate(postId, { content })
@@ -135,7 +138,7 @@ const updatePost = catchAsync(async (req, res, next) => {
   if (post) {
     successResponse(res, 200, { success: true })
   } else {
-    errorResponse(res, 400, 'Post 更新失敗')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Post 更新失敗'))
   }
 })
 
@@ -148,7 +151,7 @@ const appendLike = catchAsync(async (req, res, next) => {
   const postId = req.params.postId
 
   if (!checkValidMongoObjectId(postId)) {
-    return errorResponse(res, 400, 'Post Like 有誤')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Post Like 有誤'))
   }
 
   const post = (
@@ -163,7 +166,7 @@ const appendLike = catchAsync(async (req, res, next) => {
   if (post) {
     successResponse(res, 200, post)
   } else {
-    errorResponse(res, 400, 'Post Like 新增失敗')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Post Like 新增失敗'))
   }
 })
 
@@ -176,7 +179,7 @@ const deleteLike = catchAsync(async (req, res, next) => {
   const postId = req.params.postId
 
   if (!checkValidMongoObjectId(postId)) {
-    return errorResponse(res, 400, 'Post Like 有誤')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Post Like 有誤'))
   }
 
   const post = (
@@ -191,7 +194,7 @@ const deleteLike = catchAsync(async (req, res, next) => {
   if (post) {
     successResponse(res, 200, post)
   } else {
-    errorResponse(res, 400, 'Post Like 刪除失敗')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Post Like 刪除失敗'))
   }
 })
 
@@ -205,7 +208,7 @@ const createComment = catchAsync(async (req, res, next) => {
   const { comment } = req.body
 
   if (!checkValidMongoObjectId(postId)) {
-    return errorResponse(res, 400, 'Post Comment 有誤')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Post Comment 有誤'))
   }
 
   const newComment = await Comment.create({
@@ -217,7 +220,7 @@ const createComment = catchAsync(async (req, res, next) => {
   if (newComment) {
     successResponse(res, 200, newComment)
   } else {
-    errorResponse(res, 400, 'Post Comment 新增失敗')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Post Comment 新增失敗'))
   }
 })
 

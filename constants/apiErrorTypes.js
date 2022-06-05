@@ -1,5 +1,5 @@
-const EMAIL_EXISTS = 'EMAIL_EXISTS' // 信箱已存在
+const USER_ALREADY_EXISTS = 'USER_ALREADY_EXISTS' // 已被註冊
 
 module.exports = {
-  EMAIL_EXISTS,
+  USER_ALREADY_EXISTS,
 }

@@ -94,31 +94,23 @@ app.use('/api/v1', apiRouter)
 /**
  * 404 錯誤
  */
-app.use(function (req, res, next) {
-  res.status(404).json({
-    message: '無此路由資訊',
-  })
+const httpStatus = require('http-status')
+const ApiError = require('./utils/ApiError')
+
+app.use((req, res, next) => {
+  next(new ApiError(httpStatus.NOT_FOUND, '無此路由資訊'))
 })
 
 /**
  * 錯誤處理
  */
-const { catchErrorDev, catchErrorProd } = require('./utils/responseHandle')
-app.use(function (err, req, res, next) {
-  // For Dev
-  if (process.env.NODE_ENV === 'dev') {
-    return catchErrorDev(err, res)
-  }
+const { errorConverter, errorHandler } = require('./middleware/error')
 
-  // For Production
-  if (err.name === 'ValidationError') {
-    err.status = 400
-    err.message = '資料欄位未填寫正確，請重新輸入！'
-    return catchErrorProd(err, res)
-  }
+// convert error to ApiError, if needed
+app.use(errorConverter)
 
-  catchErrorProd(err, res)
-})
+// handle error
+app.use(errorHandler)
 
 /**
  * 未捕捉到的 catch

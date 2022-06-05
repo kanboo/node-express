@@ -1,5 +1,6 @@
 // Third Party Kit
 const bcrypt = require('bcrypt')
+const httpStatus = require('http-status')
 
 const Post = require('../models/post')
 
@@ -7,8 +8,9 @@ const Post = require('../models/post')
 const User = require('../models/user')
 
 // Utils
+const ApiError = require('../utils/ApiError')
 const catchAsync = require('../utils/catchAsync')
-const { successResponse, errorResponse } = require('../utils/responseHandle')
+const { successResponse } = require('../utils/responseHandle')
 const checkValidMongoObjectId = require('../utils/checkValidMongoObjectId')
 
 /**
@@ -31,7 +33,7 @@ const updateProfile = catchAsync(async (req, res, next) => {
 
   // 更新資料
   const newUser = await User.updateOne({ _id: userId }, { $set: { name, photo, gender } })
-  if (!newUser) { return errorResponse(res, 400, '更新失敗！') }
+  if (!newUser) { return next(new ApiError(httpStatus.BAD_REQUEST, '更新失敗')) }
 
   const user = await User.findById(userId)
 
@@ -46,7 +48,7 @@ const getUser = catchAsync(async (req, res, next) => {
   const userId = req.params.userId
 
   if (!checkValidMongoObjectId(userId)) {
-    return errorResponse(res, 400, '取得 User 有誤')
+    return next(new ApiError(httpStatus.BAD_REQUEST, '取得 User 有誤'))
   }
 
   const user = await User.findById(userId)
@@ -62,7 +64,7 @@ const getUser = catchAsync(async (req, res, next) => {
   if (user) {
     successResponse(res, 200, user)
   } else {
-    errorResponse(res, 400, '查詢失敗！')
+    return next(new ApiError(httpStatus.BAD_REQUEST, '查詢失敗！'))
   }
 })
 
@@ -103,7 +105,7 @@ const getLikePosts = catchAsync(async (req, res, next) => {
   if (posts) {
     successResponse(res, 200, posts)
   } else {
-    errorResponse(res, 400, '查詢失敗！')
+    return next(new ApiError(httpStatus.BAD_REQUEST, '查詢失敗！'))
   }
 })
 
@@ -116,11 +118,11 @@ const appendFollow = catchAsync(async (req, res, next) => {
   const followId = req.params.id
 
   if (!checkValidMongoObjectId(followId)) {
-    return errorResponse(res, 400, 'User follow 有誤')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'User follow 有誤'))
   }
 
   if (userId === followId) {
-    return errorResponse(res, 400, '無法追蹤自己')
+    return next(new ApiError(httpStatus.BAD_REQUEST, '無法追蹤自己'))
   }
 
   /**
@@ -158,11 +160,11 @@ const deleteFollow = catchAsync(async (req, res, next) => {
   const followId = req.params.id
 
   if (!checkValidMongoObjectId(followId)) {
-    return errorResponse(res, 400, 'User follow 有誤')
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'User follow 有誤'))
   }
 
   if (userId === followId) {
-    return errorResponse(res, 400, '無法追蹤自己')
+    return next(new ApiError(httpStatus.BAD_REQUEST, '無法追蹤自己'))
   }
 
   await User.updateOne(
@@ -203,7 +205,7 @@ const getFollowingList = catchAsync(async (req, res, next) => {
   if (user) {
     successResponse(res, 200, normalizedFollowing)
   } else {
-    errorResponse(res, 400, '查詢失敗！')
+    return next(new ApiError(httpStatus.BAD_REQUEST, '查詢失敗！'))
   }
 })
 
