@@ -7,16 +7,16 @@
 	},
 	"item": [
 		{
-			"name": "Auth",
+			"name": "會員功能",
 			"item": [
 				{
-					"name": "註冊",
+					"name": "註冊會員",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Admin2\",\n    \"email\": \"admin2@gmail.com\",\n    \"password\": \"1234\",\n    \"confirmPassword\": \"1234\"\n}",
+							"raw": "{\n    \"name\": \"Admin\",\n    \"email\": \"admin@gmail.com\",\n    \"password\": \"1234qwer\",\n    \"confirmPassword\": \"1234qwer\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -37,7 +37,7 @@
 					"response": []
 				},
 				{
-					"name": "登入",
+					"name": "登入會員",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -62,11 +62,279 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "重設密碼",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"newPassword\": \"1234\",\n    \"confirmPassword\": \"1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/user/update-password",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"user",
+								"update-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得個人資料",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/user/profile",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "更新個人資料",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Admin\",\n    \"photo\": \"https://i.imgur.com/LkS0n9Y.jpg\",\n    \"gender\": \"male\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/user/profile",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得指定 User 資訊",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/user/profile/627687bfa4776ea8fd98fcbd",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"user",
+								"profile",
+								"627687bfa4776ea8fd98fcbd"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
-			"name": "Post",
+			"name": "會員按讚追蹤動態",
+			"item": [
+				{
+					"name": "追蹤朋友",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/user/62775bd6bc38b94c9a9af9e8/follow",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"user",
+								"62775bd6bc38b94c9a9af9e8",
+								"follow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取消追蹤人員",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/user/62775bd6bc38b94c9a9af9e8/follow",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"user",
+								"62775bd6bc38b94c9a9af9e8",
+								"follow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得追蹤人員資訊",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/user/following-list",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"user",
+								"following-list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得個人追蹤名單",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/user/like-posts",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"user",
+								"like-posts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "動態貼文",
 			"item": [
 				{
 					"name": "取得所有貼文",
@@ -95,6 +363,315 @@
 					},
 					"response": []
 				},
+				{
+					"name": "取得單一貼文",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/post/6292fac8c16a1c29d3e71890",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"post",
+								"6292fac8c16a1c29d3e71890"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "新增貼文",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"這是一篇測試文章1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/post",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"post"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "新增一則貼文的讚",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/post/6280fedc397d4f32aaaa832f/like",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"post",
+								"6280fedc397d4f32aaaa832f",
+								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取消一則貼文的讚",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/post/6280fedc397d4f32aaaa832f/like",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"post",
+								"6280fedc397d4f32aaaa832f",
+								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "新增一則貼文的留言",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"comment\": \"測試留言...1 2 3\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/post/6292fac8c16a1c29d3e71890/comment",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"post",
+								"6292fac8c16a1c29d3e71890",
+								"comment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得個人所有貼文列表",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{API_URL}}/posts?timeSort=desc&keyword=&user=62775bd6bc38b94c9a9af9e8",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"posts"
+							],
+							"query": [
+								{
+									"key": "timeSort",
+									"value": "desc"
+								},
+								{
+									"key": "keyword",
+									"value": ""
+								},
+								{
+									"key": "user",
+									"value": "62775bd6bc38b94c9a9af9e8"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "其他",
+			"item": [
+				{
+					"name": "上傳圖片",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/Users/kanboowang/Downloads/商品圖/res08b8cb957e6680a67ef8a550bf48b0f5fr.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_URL}}/image",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "上傳頭像",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/Users/kanboowang/Downloads/商品圖/4524785334892_1.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{API_URL}}/image?type=avatar",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"image"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "avatar"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "前端尚未實作",
+			"item": [
 				{
 					"name": "刪除所有貼文",
 					"request": {
@@ -151,42 +728,6 @@
 					"response": []
 				},
 				{
-					"name": "新增貼文",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"content\": \"這是一篇測試文章1\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_URL}}/post",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"post"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "更新貼文",
 					"request": {
 						"auth": {
@@ -218,397 +759,6 @@
 							"path": [
 								"post",
 								"6277ef277dc619dc878d27fc"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "上傳圖片",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "image",
-									"type": "file",
-									"src": "/Users/kanboowang/Downloads/商品圖/4524785101784_1.jpeg"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{API_URL}}/image",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"image"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "User",
-			"item": [
-				{
-					"name": "取得 User 資訊",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{API_URL}}/user/profile",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"user",
-								"profile"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "更新 User 資訊",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Admin\",\n    \"photo\": \"https://i.imgur.com/LkS0n9Y.jpg\",\n    \"gender\": \"male\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_URL}}/user/profile",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"user",
-								"profile"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "更新 Password",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"newPassword\": \"2222\",\n    \"confirmPassword\": \"2222\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_URL}}/user/update-password",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"user",
-								"update-password"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "取得指定 User 資訊",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{API_URL}}/user/profile/627687bfa4776ea8fd98fcbd",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"user",
-								"profile",
-								"627687bfa4776ea8fd98fcbd"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "按讚相關 API",
-			"item": [
-				{
-					"name": "取得按讚貼文",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{API_URL}}/user/like-posts",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"user",
-								"like-posts"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "新增點讚",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_URL}}/post/6280fedc397d4f32aaaa832f/like",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"post",
-								"6280fedc397d4f32aaaa832f",
-								"like"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "刪除點讚",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_URL}}/post/6280fedc397d4f32aaaa832f/like",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"post",
-								"6280fedc397d4f32aaaa832f",
-								"like"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "追蹤相關 API",
-			"item": [
-				{
-					"name": "取得追蹤人員資訊",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{API_URL}}/user/following-list",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"user",
-								"following-list"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "新增追蹤人員",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_URL}}/user/62775bd6bc38b94c9a9af9e8/follow",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"user",
-								"62775bd6bc38b94c9a9af9e8",
-								"follow"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "刪除追蹤人員",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{JWT}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{API_URL}}/user/62775bd6bc38b94c9a9af9e8/follow",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"user",
-								"62775bd6bc38b94c9a9af9e8",
-								"follow"
 							]
 						}
 					},
