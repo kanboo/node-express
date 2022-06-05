@@ -1,8 +1,8 @@
-const rateLimit = require('express-rate-limit')
 const express = require('express')
 const router = express.Router()
 
 const authenticationAndGetUser = require('../middleware/authenticationAndGetUser')
+const rateLimiter = require('../middleware/rateLimiter')
 
 const authValidation = require('../validations/auth')
 const userValidation = require('../validations/user')
@@ -27,8 +27,8 @@ router.post(
  */
 const AuthController = require('../controllers/auth')
 
-router.post('/auth/register', authValidation.register, AuthController.register)
-router.post('/auth/login', authValidation.login, AuthController.login)
+router.post('/auth/register', rateLimiter.authLimiter, authValidation.register, AuthController.register)
+router.post('/auth/login', rateLimiter.authLimiter, authValidation.login, AuthController.login)
 
 /**
  * User 使用者
@@ -71,28 +71,13 @@ router
   .delete(authenticationAndGetUser, PostController.deletePost)
   .patch(authenticationAndGetUser, postValidation.updatePost, PostController.updatePost)
 
-// IP 限制請求數
-const likeLimiter = rateLimit({
-  windowMs: 10 * 1000, // 10 seconds
-  max: 5, // Limit each IP to 5 requests per `window` (here, per 10 seconds)
-  standardHeaders: false, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-})
-
 router
   .route('/post/:postId/like')
-  .post(likeLimiter, authenticationAndGetUser, PostController.appendLike)
-  .delete(likeLimiter, authenticationAndGetUser, PostController.deleteLike)
-
-const commentLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minutes
-  max: 10, // Limit each IP to 10 requests per `window` (here, per 1 minutes)
-  standardHeaders: false, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-})
+  .post(rateLimiter.likeLimiter, authenticationAndGetUser, PostController.appendLike)
+  .delete(rateLimiter.likeLimiter, authenticationAndGetUser, PostController.deleteLike)
 
 router
   .route('/post/:postId/comment')
-  .post(commentLimiter, authenticationAndGetUser, postValidation.createComment, PostController.createComment)
+  .post(rateLimiter.commentLimiter, authenticationAndGetUser, postValidation.createComment, PostController.createComment)
 
 module.exports = router
