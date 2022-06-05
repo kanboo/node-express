@@ -1,3 +1,4 @@
+const rateLimit = require('express-rate-limit')
 const express = require('express')
 const router = express.Router()
 
@@ -70,13 +71,28 @@ router
   .delete(authenticationAndGetUser, PostController.deletePost)
   .patch(authenticationAndGetUser, postValidation.updatePost, PostController.updatePost)
 
+// IP 限制請求數
+const likeLimiter = rateLimit({
+  windowMs: 10 * 1000, // 10 seconds
+  max: 5, // Limit each IP to 5 requests per `window` (here, per 10 seconds)
+  standardHeaders: false, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+})
+
 router
   .route('/post/:postId/like')
-  .post(authenticationAndGetUser, PostController.appendLike)
-  .delete(authenticationAndGetUser, PostController.deleteLike)
+  .post(likeLimiter, authenticationAndGetUser, PostController.appendLike)
+  .delete(likeLimiter, authenticationAndGetUser, PostController.deleteLike)
+
+const commentLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minutes
+  max: 10, // Limit each IP to 10 requests per `window` (here, per 1 minutes)
+  standardHeaders: false, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+})
 
 router
   .route('/post/:postId/comment')
-  .post(authenticationAndGetUser, postValidation.createComment, PostController.createComment)
+  .post(commentLimiter, authenticationAndGetUser, postValidation.createComment, PostController.createComment)
 
 module.exports = router

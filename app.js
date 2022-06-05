@@ -75,6 +75,11 @@ process.on('uncaughtException', (err) => {
  * Router
  */
 
+// Troubleshooting Proxy Issues
+// https://github.com/nfriedly/express-rate-limit#troubleshooting-proxy-issues
+app.set('trust proxy', 1)
+app.get('/ip', (request, response) => response.send(request.ip))
+
 // For Server
 const indexRouter = require('./routes/index')
 const authRouter = require('./routes/auth')
